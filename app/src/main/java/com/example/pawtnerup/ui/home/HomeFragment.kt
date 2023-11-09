@@ -1,4 +1,4 @@
-package com.example.pawtnerup.ui.profile
+package com.example.pawtnerup.ui.home
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,22 +10,22 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.pawtnerup.R
 
 
-class ProfileFragment : Fragment() {
-    private lateinit var profileViewModel: ProfileViewModel
+class HomeFragment : Fragment() {
+
+    private lateinit var homeViewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        profileViewModel =
-            ViewModelProvider(this)[ProfileViewModel::class.java]
-        val root = inflater.inflate(R.layout.fragment_profile, container, false)
-        val textView: TextView = root.findViewById(R.id.tv_profile)
-        profileViewModel.text.observe(viewLifecycleOwner) {
+        homeViewModel =
+            ViewModelProvider(this)[HomeViewModel::class.java]
+        val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val textView: TextView = root.findViewById(R.id.tv_home)
+        homeViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
     }
-
 }

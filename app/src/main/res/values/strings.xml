@@ -3,4 +3,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="AppName">PawtnerUp</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="favorite">Favorite</string>
+    <string name="name">name</string>
+    <string name="report_found_pet">Report Found Pet</string>
+    <string name="send_report">Send Report</string>
+    <string name="what_pet_it_is">What pet it is?</string>
+    <string name="where_is_it">Where is it?</string>
+    <string name="describe_the_condition">Describe the condition</string>
 </resources>
