@@ -13,6 +13,7 @@ import com.example.pawtnerup.R
 import com.example.pawtnerup.databinding.ActivityOnboardingBinding
 import com.example.pawtnerup.ui.home.HomeFragment
 import com.example.pawtnerup.ui.main.MainActivity
+import com.example.pawtnerup.ui.questionnaire.QuestionnaireActivity
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -58,7 +59,7 @@ class OnboardingActivity : AppCompatActivity() {
             if (binding.onboardingViewPager.currentItem + 1 < onboardingAdapter.itemCount) {
                 binding.onboardingViewPager.currentItem += binding.onboardingViewPager.currentItem
             } else {
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(Intent(this, QuestionnaireActivity::class.java))
                 finish()
             }
         }

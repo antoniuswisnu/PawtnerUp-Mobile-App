@@ -14,20 +14,16 @@ import android.view.View
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import androidx.lifecycle.lifecycleScope
+import com.example.pawtnerup.databinding.ActivityQuestionnaireBinding
 import com.example.pawtnerup.databinding.ActivityReportBinding
 import com.example.pawtnerup.di.reduceFileImage
 import com.example.pawtnerup.di.uriToFile
 import com.example.pawtnerup.ui.camera.CameraActivity
 import com.example.pawtnerup.ui.camera.CameraActivity.Companion.CAMERAX_RESULT
-import com.example.pawtnerup.ui.main.MainActivity
-import com.google.gson.Gson
-import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.HttpException
 
 class ReportActivity : AppCompatActivity() {
 
@@ -57,7 +53,8 @@ class ReportActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_report)
+        binding = ActivityReportBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (!allPermissionsGranted()) {
             requestPermissionLauncher.launch(REQUIRED_PERMISSION)

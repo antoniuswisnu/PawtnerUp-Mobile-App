@@ -1,14 +1,12 @@
 package com.example.pawtnerup.ui.onboarding
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pawtnerup.databinding.ItemOnboardingBinding
 
 class OnboardingPagerAdapter(private val onBoardingItems: List<OnBoardingItem>) :
     RecyclerView.Adapter<OnboardingPagerAdapter.OnboardingViewHolder>() {
-
 
     override fun onBindViewHolder(holder: OnboardingViewHolder, position: Int) {
         holder.setOnBoardingData(onBoardingItems[position])
