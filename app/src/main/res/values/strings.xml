@@ -12,4 +12,7 @@
     <string name="what_pet_it_is">What pet it is?</string>
     <string name="where_is_it">Where is it?</string>
     <string name="describe_the_condition">Describe the condition</string>
+    <string name="server_client_id">
+        1069774869772-4q2q4q2q4q2q4q2q4q2q4q2q4q2q4q2q.apps.googleusercontent.com
+    </string>
 </resources>

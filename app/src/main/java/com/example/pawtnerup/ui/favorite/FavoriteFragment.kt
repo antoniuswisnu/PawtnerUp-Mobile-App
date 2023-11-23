@@ -32,7 +32,7 @@ class FavoriteFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentFavoriteBinding.inflate(layoutInflater)
+        binding = FragmentFavoriteBinding.inflate(inflater)
         favoriteViewModel = ViewModelProvider(this)[FavoriteViewModel::class.java]
         val root = inflater.inflate(R.layout.fragment_favorite, container, false)
 
@@ -71,7 +71,7 @@ class FavoriteFragment : Fragment() {
         storiesViewModel.getListStory.observe(viewLifecycleOwner) { list ->
             if (list != null) {
                 adapter.submitData(lifecycle, list)
-                Log.d("FavoriteFragment", "getData: ${list.toString()}")
+                Log.d("FavoriteFragment", "getData: $list")
             }
         }
 

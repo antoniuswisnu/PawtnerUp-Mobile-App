@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "647741644759",
+    "project_id": "pawtnerup-ee03d",
+    "storage_bucket": "pawtnerup-ee03d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647741644759:android:67347842c675d43cc2f592",
+        "android_client_info": {
+          "package_name": "com.example.pawtnerup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDB49UsyFxPg_GMBlaCmKVbyvrbiQWx3dM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
