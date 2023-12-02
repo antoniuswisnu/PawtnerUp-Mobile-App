@@ -14,7 +14,7 @@ import com.example.pawtnerup.api.response.LoginResult
 import com.example.pawtnerup.data.paging.LoadingStateAdapter
 import com.example.pawtnerup.data.pref.LoginPreferences
 import com.example.pawtnerup.databinding.FragmentFavoriteBinding
-import com.example.pawtnerup.di.ViewModelFactory
+import com.example.pawtnerup.ui.ViewModelFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

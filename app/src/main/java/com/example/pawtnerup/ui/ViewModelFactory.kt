@@ -1,4 +1,4 @@
-package com.example.pawtnerup.di
+package com.example.pawtnerup.ui
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

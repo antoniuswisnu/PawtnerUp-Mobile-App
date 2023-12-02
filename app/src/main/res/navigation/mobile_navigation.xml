@@ -21,5 +21,26 @@
         android:id="@+id/navigation_profile"
         android:name="com.example.pawtnerup.ui.profile.ProfileFragment"
         android:label="@string/profile"
-        tools:layout="@layout/fragment_profile"/>
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_navigation_profile_to_reportActivity2"
+            app:destination="@id/reportActivity" />
+        <action
+            android:id="@+id/action_navigation_profile_to_settingActivity"
+            app:destination="@id/settingActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/reportActivity"
+        android:name="com.example.pawtnerup.ui.report.ReportActivity"
+        android:label="activity_report"
+        tools:layout="@layout/activity_report" />
+    <activity
+        android:id="@+id/cameraActivity"
+        android:name="com.example.pawtnerup.ui.camera.CameraActivity"
+        android:label="activity_camera"
+        tools:layout="@layout/activity_camera" />
+    <activity
+        android:id="@+id/settingActivity"
+        android:name="com.example.pawtnerup.ui.setting.SettingActivity"
+        android:label="SettingActivity" />
 </navigation>

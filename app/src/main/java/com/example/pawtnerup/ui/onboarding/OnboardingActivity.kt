@@ -2,6 +2,7 @@ package com.example.pawtnerup.ui.onboarding
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.pawtnerup.R
+import com.example.pawtnerup.data.pref.UserModel
 import com.example.pawtnerup.databinding.ActivityOnboardingBinding
 import com.example.pawtnerup.ui.home.HomeFragment
 import com.example.pawtnerup.ui.main.MainActivity
@@ -24,6 +26,15 @@ class OnboardingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val userModel = if(Build.VERSION.SDK_INT >= 33){
+            intent.getParcelableExtra("userData", UserModel::class.java)
+        } else {
+            @Suppress
+            intent.getParcelableExtra<UserModel>("userData")
+        }
+        val intentToProfile = Intent(this, MainActivity::class.java)
+        intentToProfile.putExtra("userModel", userModel)
 
         onboardingAdapter = OnboardingPagerAdapter(
             listOf(

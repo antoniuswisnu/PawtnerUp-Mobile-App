@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class DetailViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val storyRepository = Injection.provideStoryRepository(application)
+//    private val storyRepository = Injection.provideStoryRepository(application)
 
     private val _detailStory = MutableLiveData<Story?>()
     val detailStory: MutableLiveData<Story?> = _detailStory
@@ -24,8 +24,8 @@ class DetailViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             try {
                 _isLoading.value = false
-                val response = storyRepository.getDetailStory(id)
-                _detailStory.postValue(response)
+//                val response = storyRepository.getDetailStory(id)
+//                _detailStory.postValue(response)
             } catch (e: Exception) {
                 // Handle exception and show error message
 

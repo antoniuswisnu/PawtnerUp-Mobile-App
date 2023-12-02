@@ -15,4 +15,18 @@
     <string name="server_client_id">
         1069774869772-4q2q4q2q4q2q4q2q4q2q4q2q4q2q4q2q.apps.googleusercontent.com
     </string>
+
+    <string name="reminder_header">Reminder</string>
+    <string name="pref_key_notify">key_notification</string>
+    <string name="pref_notify_summary">Daily reminder for nearest schedule of the day.</string>
+    <string name="pref_notify_name">Notification</string>
+    <string name="display_header">Display</string>
+    <string name="pref_dark_title">Dark mode</string>
+    <string name="pref_key_dark" translatable="false">key_dark_mode</string>
+    <string name="pref_dark_auto" translatable="false">auto</string>
+    <string name="pref_dark_on" translatable="false">on</string>
+    <string name="pref_dark_off" translatable="false">off</string>
+    <string name="dark_mode_auto">Automatic</string>
+    <string name="dark_mode_on">Dark mode</string>
+    <string name="dark_mode_off">Light mode</string>
 </resources>
