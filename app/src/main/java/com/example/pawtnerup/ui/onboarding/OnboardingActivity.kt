@@ -27,14 +27,7 @@ class OnboardingActivity : AppCompatActivity() {
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userModel = if(Build.VERSION.SDK_INT >= 33){
-            intent.getParcelableExtra("userData", UserModel::class.java)
-        } else {
-            @Suppress
-            intent.getParcelableExtra<UserModel>("userData")
-        }
-        val intentToProfile = Intent(this, MainActivity::class.java)
-        intentToProfile.putExtra("userModel", userModel)
+
 
         onboardingAdapter = OnboardingPagerAdapter(
             listOf(
@@ -70,7 +63,15 @@ class OnboardingActivity : AppCompatActivity() {
             if (binding.onboardingViewPager.currentItem + 1 < onboardingAdapter.itemCount) {
                 binding.onboardingViewPager.currentItem += binding.onboardingViewPager.currentItem
             } else {
-                startActivity(Intent(this, QuestionnaireActivity::class.java))
+                val userModel = if(Build.VERSION.SDK_INT >= 33){
+                    intent.getParcelableExtra("userData", UserModel::class.java)
+                } else {
+                    @Suppress
+                    intent.getParcelableExtra<UserModel>("userData")
+                }
+                val intent = Intent(this, QuestionnaireActivity::class.java)
+                intent.putExtra("userData", userModel)
+                startActivity(intent)
                 finish()
             }
         }

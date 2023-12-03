@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.example.pawtnerup.R
 import com.example.pawtnerup.data.pref.UserModel
 import com.example.pawtnerup.databinding.ActivityLoginBinding
 import com.example.pawtnerup.ui.main.MainActivity
@@ -15,6 +16,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.NameValuePair
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.ClientProtocolException
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.entity.UrlEncodedFormEntity
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.methods.HttpPost
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils
+import java.io.IOException
+import java.util.ArrayList
+
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -33,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
         val displayName = prefs.getString("displayName", null)
         val photoUrl = prefs.getString("photoUrl", null)
 
-        if (email != null && idToken != null && displayName != null && photoUrl != null) {
+        if (displayName != null) {
             val userModel = UserModel(
                 email,
                 idToken,
@@ -46,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.server_client_id))
             .requestEmail()
             .build()
 
@@ -62,16 +77,35 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
-
         }
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
+            val idToken = account.idToken
+
+            // TODO(developer): send ID Token to server and validate
+//            val httpClient: HttpClient = DefaultHttpClient()
+//            val httpPost = HttpPost("https://igneous-walker-404307.et.r.appspot.com/shelters/pets/me")
+//
+//            try {
+//                val nameValuePairs: MutableList<NameValuePair> = ArrayList<NameValuePair>(1)
+//                nameValuePairs.add(BasicNameValuePair("idToken", idToken))
+//                httpPost.entity = UrlEncodedFormEntity(nameValuePairs)
+//                val response: HttpResponse = httpClient.execute(httpPost)
+//                val statusCode: Int = response.statusLine.statusCode
+//                val responseBody: String = EntityUtils.toString(response.entity)
+//                Log.i(TAG, "Signed in as: $responseBody")
+//                Log.d(TAG, "Signed in as: $statusCode")
+//            } catch (e: ClientProtocolException) {
+//                Log.e(TAG, "Error sending ID token to backend.", e)
+//            } catch (e: IOException) {
+//                Log.e(TAG, "Error sending ID token to backend.", e)
+//            }
             updateUI(account)
         } catch (e: ApiException) {
-            Log.e(TAG, "Sign-in failed")
+            Log.w(TAG, "signInResult:failed code= $e")
         }
     }
 
@@ -100,15 +134,17 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, OnboardingActivity::class.java)
             intent.putExtra("userData", userModel)
             startActivity(intent)
+
             Log.d(TAG, "Sign-in success: " +
-                    "idToken : $idToken " +
-                    "displayName : $displayName " +
-                    "email : $email " +
-                    "photoUrl : $photoUrl" +
-                    "id" + account.id +
-                    "account" + account.account +
-                    "serverAuthCode" + account.serverAuthCode +
-                    "grantedScopes" + account.grantedScopes
+                    "idToken : $idToken, " +
+                    "displayName : $displayName, " +
+                    "email : $email, " +
+                    "photoUrl : $photoUrl, " +
+                    "id :" + account.id + ", " +
+                    "account : " + account.account + ", " +
+                    "serverAuthCode : " + account.serverAuthCode + ", " +
+                    "grantedScopes : " + account.grantedScopes + ", " +
+                    "isExpired : " + account.isExpired
             )
         }
     }

@@ -3,10 +3,17 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
     id("kotlin-kapt")
-    id("com.google.gms.google-services")
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile = file("D:\\Bangkit\\Copmany Capstone\\PawtnerUp\\my_new_release.jks")
+            storePassword = "wisnu123"
+            keyAlias = "key0"
+            keyPassword = "wisnu123"
+        }
+    }
     namespace = "com.example.pawtnerup"
     compileSdk = 34
 
@@ -27,6 +34,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -49,8 +57,8 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.navigation:navigation-fragment:2.7.5")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
-    implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
     implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("com.google.firebase:firebase-crashlytics-buildtools:2.9.9")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -109,5 +117,11 @@ dependencies {
     // Google Auth
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
+    // HTTP
+//    implementation("org.apache.httpcomponents:httpclient:4.5.13")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+
+    // google cloud crash analytic
+//   implementation("com.google.firebase:firebase-crashlytics-ktx")
 
 }
