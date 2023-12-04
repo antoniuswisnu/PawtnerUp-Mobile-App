@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -26,8 +27,6 @@ class OnboardingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
 
         onboardingAdapter = OnboardingPagerAdapter(
             listOf(
@@ -107,51 +106,9 @@ class OnboardingActivity : AppCompatActivity() {
         }
         if (index == onboardingAdapter.itemCount - 1) {
             binding.buttonOnBoardingAction.text = "Get Started"
+            binding.buttonOnBoardingAction.visibility = View.VISIBLE
         } else {
-            binding.buttonOnBoardingAction.text = "Next"
+            binding.buttonOnBoardingAction.visibility = View.GONE
         }
     }
-
-//    private fun setOnboardingItem() {
-//        val onBoardingItems = ArrayList<OnBoardingItem>()
-//        onBoardingItems.add(
-//            OnBoardingItem(
-//                R.drawable.dog1,
-//                "Welcome to PawtnerUp",
-//                "Adopt Don’t Shop!"
-//            )
-//        )
-//        onBoardingItems.add(
-//            OnBoardingItem(
-//                R.drawable.dog2,
-//                "Make a New Friend",
-//                "After this there will be a questionnaire to help us to recommend your future pet "
-//            )
-//        )
-//        onBoardingItems.add(
-//            OnBoardingItem(
-//                R.drawable.dog3,
-//                "Enjoy The App!",
-//                "Adopt Don’t Shop"
-//            )
-//        )
-//    }
-//
-//    val itemFastFood = OnBoardingItem(
-//        R.drawable.dog1,
-//        "Welcome to PawtnerUp",
-//        "Adopt Don’t Shop!"
-//    )
-//
-//    val itemPayOnline = OnBoardingItem(
-//        R.drawable.dog2,
-//        "Make a New Friend",
-//        "After this there will be a questionnaire to help us to recommend your future pet "
-//    )
-//
-//    val itemEatTogether = OnBoardingItem(
-//        R.drawable.dog3,
-//        "Enjoy The App!",
-//        "Adopt Don’t Shop"
-//    )
 }

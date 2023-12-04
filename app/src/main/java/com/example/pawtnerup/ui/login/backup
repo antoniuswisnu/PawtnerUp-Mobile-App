@@ -1,22 +1,3 @@
-package com.example.pawtnerup.ui.login
-
-import android.content.Intent
-import android.content.SharedPreferences
-import android.os.Bundle
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import com.example.pawtnerup.R
-import com.example.pawtnerup.data.pref.UserModel
-import com.example.pawtnerup.databinding.ActivityLoginBinding
-import com.example.pawtnerup.ui.main.MainActivity
-import com.example.pawtnerup.ui.onboarding.OnboardingActivity
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
-
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -47,8 +28,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.pawtnerup_mobile_client_id_new))
-            .requestEmail()
+            .requestIdToken(getString(R.string.server_client_id))
+             .requestEmail()
             .build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -70,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
+            val idToken = account.idToken
             updateUI(account)
         } catch (e: ApiException) {
             Log.w(TAG, "signInResult:failed code= $e")

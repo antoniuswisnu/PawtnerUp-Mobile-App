@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.login.LoginActivity"
-    android:background="@color/background">
+    android:background="@drawable/bg_login">
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="102dp"
         android:layout_height="102dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="300dp"
         android:src="@drawable/logo_border"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,28 +25,11 @@
         android:layout_marginTop="8dp"
         android:fontFamily="@font/poppins_bold"
         android:text="Find Your \n Pawtner"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/imageView2"
         app:layout_constraintStart_toStartOf="@+id/imageView2"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-<!--    <Button-->
-<!--        android:id="@+id/sign_in_button"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="32dp"-->
-<!--        android:layout_marginEnd="32dp"-->
-<!--        android:backgroundTint="@color/primary"-->
-<!--        android:fontFamily="@font/poppins_bold"-->
-<!--        android:text="Login With Google"-->
-<!--        android:textColor="@color/white"-->
-<!--        android:textSize="13sp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/textView" />-->
-
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -54,8 +37,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="login"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:circularflow_radiusInDP="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

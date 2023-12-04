@@ -12,8 +12,15 @@
     <string name="what_pet_it_is">What pet it is?</string>
     <string name="where_is_it">Where is it?</string>
     <string name="describe_the_condition">Describe the condition</string>
-    <string name="server_client_id">
-        1069774869772-4q2q4q2q4q2q4q2q4q2q4q2q4q2q4q2q.apps.googleusercontent.com
+    <string name="pawtnerup_web_client_id">
+        1008095752587-o3smg1tmvagh4km2due6kbbrta6qvi4o.apps.googleusercontent.com
+    </string>
+    <string name="pawtnerup_mobile_client_id">
+        1008095752587-c4ercsjckb0nlc3s5lt3ktlvvgd06hn1.apps.googleusercontent.com
+    </string>
+
+    <string name="pawtnerup_mobile_client_id_new">
+        1008095752587-ku016r5npgs2p0jp6pgo7ii093e2kre0.apps.googleusercontent.com
     </string>
 
     <string name="reminder_header">Reminder</string>
@@ -29,4 +36,5 @@
     <string name="dark_mode_auto">Automatic</string>
     <string name="dark_mode_on">Dark mode</string>
     <string name="dark_mode_off">Light mode</string>
+    <string name="questionnaire">Questionnaire</string>
 </resources>

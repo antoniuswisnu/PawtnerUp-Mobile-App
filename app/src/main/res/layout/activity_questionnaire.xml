@@ -1,29 +1,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
+    android:background="@color/background"
     tools:context=".ui.questionnaire.QuestionnaireActivity">
 
     <TextView
         android:id="@+id/questionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Question Text"
+        android:text="@string/questionnaire"
+        android:textColor="@color/primary"
+        android:fontFamily="@font/poppins_bold"
+        android:layout_marginTop="32dp"
+        android:layout_gravity="center_horizontal"
         android:textSize="24sp" />
 
     <Button
         android:id="@+id/choiceButton1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/custom_button_questionnaire"
         android:text="Choice 1" />
 
     <Button
         android:id="@+id/choiceButton2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/custom_button_questionnaire"
         android:text="Choice 2" />
 
 </LinearLayout>

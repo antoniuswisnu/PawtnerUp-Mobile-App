@@ -1,0 +1,62 @@
+class LoginActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityLoginBinding
+    private lateinit var oneTapClient: SignInClient
+    private lateinit var signInRequest: BeginSignInRequest
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        oneTapClient = Identity.getSignInClient(this);
+        signInRequest = BeginSignInRequest.builder()
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                .setSupported(true)
+                .setServerClientId(getString(R.string.pawtnerup_web_client_id))
+                .setFilterByAuthorizedAccounts(true)
+                .build())
+            .build()
+
+        val activityResultLauncher: ActivityResultLauncher<IntentSenderRequest>  =
+                registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult(), ActivityResultCallback<ActivityResult>{
+                    if (it.resultCode == RESULT_OK) {
+                        try {
+                            val credential = oneTapClient.getSignInCredentialFromIntent(it.data)
+                            val idToken = credential.googleIdToken
+                            val username = credential.displayName
+                            val email = credential.id
+                            val intent = Intent(this, MainActivity::class.java)
+                            intent.putExtra("username", username)
+                            intent.putExtra("email", email)
+                            intent.putExtra("idToken", idToken)
+                            startActivity(intent)
+                            finish()
+                            Log.d(TAG, "idToken: $idToken username: $username email: $email")
+                        } catch (e: IntentSender.SendIntentException) {
+                            Log.e(TAG, "Couldn't get credential from result intent", e)
+                        }
+                    } else {
+                        Toast.makeText(this, "Sign in failed", Toast.LENGTH_LONG).show()
+                        Log.d(TAG, "One Tap result: resultCode=${it.resultCode}, data=${it.data}")
+                    }
+                    Log.d(TAG, "One Tap result: resultCode=${it.resultCode}, data=${it.data}")
+                })
+
+        binding.signInButton.setOnClickListener {
+            oneTapClient.beginSignIn(signInRequest)
+                .addOnSuccessListener(this) { result ->
+                   val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent.intentSender)
+                       .build()
+                    activityResultLauncher.launch(intentSenderRequest)
+                }
+                .addOnFailureListener(this) { e ->
+                    e.localizedMessage?.let { it1 -> Log.d(TAG, it1) }
+                }
+        }
+    }
+    companion object {
+        private const val TAG = "LoginActivity"
+    }
+}

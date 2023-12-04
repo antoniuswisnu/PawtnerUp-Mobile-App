@@ -9,6 +9,8 @@
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="match_parent"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
         android:layout_height="500dp"
         android:layout_marginBottom="64dp"
         android:src="@drawable/element_onboarding"
@@ -36,9 +38,9 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_bold"
         android:gravity="center"
-        android:textAllCaps="true"
         android:textColor="@color/primary"
         android:textSize="24sp"
+        android:layout_marginTop="64dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageOnboarding" />
@@ -51,6 +53,8 @@
         android:gravity="center"
         android:textColor="@color/black"
         android:textSize="18sp"
+        android:layout_marginEnd="48dp"
+        android:layout_marginStart="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textTitle" />

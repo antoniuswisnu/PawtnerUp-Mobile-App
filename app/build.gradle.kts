@@ -118,10 +118,11 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     // HTTP
-//    implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
-    // google cloud crash analytic
-//   implementation("com.google.firebase:firebase-crashlytics-ktx")
+    // google api client
+//    implementation("com.google.api-client:google-api-client:1.31.5")
+
+
 
 }
