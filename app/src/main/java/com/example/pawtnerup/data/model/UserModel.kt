@@ -1,4 +1,4 @@
-package com.example.pawtnerup.data.pref
+package com.example.pawtnerup.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

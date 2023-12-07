@@ -6,9 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.pawtnerup.data.pref.UserModel
+import com.example.pawtnerup.data.model.QuestionnaireModel
+import com.example.pawtnerup.data.model.QuestionnaireModel2
 import com.example.pawtnerup.databinding.ActivityQuestionnaireBinding
-import com.example.pawtnerup.ui.main.MainActivity
 
 class QuestionnaireActivity : AppCompatActivity() {
 
@@ -18,7 +18,6 @@ class QuestionnaireActivity : AppCompatActivity() {
         "How old do you want \n your dog to be??",
         "Which dog's gender \n do you preferred?"
     )
-
     private val answerChoice1 = listOf(
          "Giant", "Large", "Medium", "Small"
     )
@@ -29,49 +28,65 @@ class QuestionnaireActivity : AppCompatActivity() {
         "Male", "Female"
     )
     private var currentQuestionIndex = 0
-    private var answer = mutableListOf("", "", "")
+    private var answer1 = ""
+    private var answer2 = ""
+    private var answer3 = ""
+    private var answer4 = ""
+    private var listAnswer1 = ArrayList<String>()
+    private var listAnswer2 = ArrayList<String>()
+    private var listAnswer3 = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityQuestionnaireBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            if (currentQuestionIndex < questions.size && answer[currentQuestionIndex].isEmpty()){
-                when (checkedId) {
-                    binding.rb1.id -> {
-                        val temp = binding.rb1.text
-                        answer[currentQuestionIndex] += "$temp, "
-                        showToastAndClearCheck("Choice 1")
-                    }
-                    binding.rb2.id -> {
-                        val temp = binding.rb2.text
-                        answer[currentQuestionIndex] += "$temp, "
-                        showToastAndClearCheck("choice 2")
-                    }
-                    binding.rb3.id -> {
-                        val temp = binding.rb3.text
-                        answer[currentQuestionIndex] += "$temp, "
-                        showToastAndClearCheck("choice 3")
-                    }
-                    binding.rb4.id -> {
-                        val temp = binding.rb4.text
-                        answer[currentQuestionIndex] += "$temp, "
-                        showToastAndClearCheck("choice 4")
-                    }
+        if (currentQuestionIndex < questions.size){
+            binding.rb1.setOnCheckedChangeListener{ _, isChecked ->
+                answer1 = if(isChecked){
+                    binding.rb1.text.toString()
+                } else {
+                    ""
+                }
+            }
+            binding.rb2.setOnCheckedChangeListener{ _, isChecked ->
+                answer2 = if(isChecked){
+                    binding.rb2.text.toString()
+                } else {
+                    ""
+                }
+            }
+            binding.rb3.setOnCheckedChangeListener{ _, isChecked ->
+                answer3 = if(isChecked){
+                    binding.rb3.text.toString()
+                } else {
+                    ""
+                }
+            }
+            binding.rb4.setOnCheckedChangeListener{ _, isChecked ->
+                answer4 = if(isChecked){
+                    binding.rb4.text.toString()
+                } else {
+                    ""
                 }
             }
         }
 
         binding.btnNext.setOnClickListener {
             processAnswer()
-            Log.d(TAG, "processAnswer: $answer")
-        }
-    }
+            Log.d(TAG, "processAnswer: $listAnswer1 $listAnswer2 $listAnswer3")
 
-    private fun showToastAndClearCheck(choice: String) {
-        Toast.makeText(this, choice, Toast.LENGTH_SHORT).show()
-        binding.radioGroup.clearCheck()
+            if (currentQuestionIndex == 0){
+                Toast.makeText(this, "$listAnswer1", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "listAnswer1: $listAnswer1")
+            } else if (currentQuestionIndex == 1){
+                Toast.makeText(this, "$listAnswer2", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "listAnswer2: $listAnswer2")
+            } else {
+                Toast.makeText(this, "$listAnswer3", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "listAnswer3: $listAnswer3")
+            }
+        }
     }
 
     private fun displayQuestion() {
@@ -96,24 +111,82 @@ class QuestionnaireActivity : AppCompatActivity() {
             }
 
         } else {
-            val userModel = if(Build.VERSION.SDK_INT >= 33){
-                intent.getParcelableExtra("userData", UserModel::class.java)
+            val questionnaireModel = if (Build.VERSION.SDK_INT >= 33){
+                intent.getParcelableExtra("questionnaireData", QuestionnaireModel::class.java)
             } else {
                 @Suppress
-                intent.getParcelableExtra<UserModel>("userData")
+                intent.getParcelableExtra<QuestionnaireModel>("questionnaireData")
             }
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("userData", userModel)
+
+            val questionnaireModel2 = QuestionnaireModel2(
+                listAnswer1,
+                listAnswer2,
+                listAnswer3,
+                0
+            )
+
+            val editor = getSharedPreferences("questionnaireData2", MODE_PRIVATE).edit()
+            editor.putString("petSizes", listAnswer1.toString())
+            editor.putString("petAges", listAnswer2.toString())
+            editor.putString("petGenders", listAnswer3.toString())
+            editor.apply()
+
+            val intent = Intent(this, BreedQuestionnaireActivity::class.java)
+            intent.putExtra("questionnaireData", questionnaireModel)
+            intent.putExtra("questionnaireData2", questionnaireModel2)
             startActivity(intent)
         }
     }
 
     private fun processAnswer() {
-        Toast.makeText(this, "Answer: $answer", Toast.LENGTH_SHORT).show()
-        binding.radioGroup.clearCheck()
+        if (currentQuestionIndex == 0){
+            if(answer1.isNotEmpty()){
+                listAnswer1.add(answer1)
+            }
+            if (answer2.isNotEmpty()){
+                listAnswer1.add(answer2)
+            }
+            if (answer3.isNotEmpty()){
+                listAnswer1.add(answer3)
+            }
+            if (answer4.isNotEmpty()){
+                listAnswer1.add(answer4)
+            }
+        } else if (currentQuestionIndex == 1){
+            if(answer1.isNotEmpty()){
+                listAnswer2.add(answer1)
+            }
+            if (answer2.isNotEmpty()){
+                listAnswer2.add(answer2)
+            }
+            if (answer3.isNotEmpty()){
+                listAnswer2.add(answer3)
+            }
+            if (answer4.isNotEmpty()){
+                listAnswer2.add(answer4)
+            }
+        } else {
+            if(answer1.isNotEmpty()){
+                listAnswer3.add(answer1)
+            }
+            if (answer2.isNotEmpty()){
+                listAnswer3.add(answer2)
+            }
+            if (answer3.isNotEmpty()){
+                listAnswer3.add(answer3)
+            }
+            if (answer4.isNotEmpty()){
+                listAnswer3.add(answer4)
+            }
+        }
+
+        binding.rb1.isChecked = false
+        binding.rb2.isChecked = false
+        binding.rb3.isChecked = false
+        binding.rb4.isChecked = false
+
         currentQuestionIndex++
         displayQuestion()
-        Log.d(TAG, "processAnswer: $answer")
     }
 
     companion object {

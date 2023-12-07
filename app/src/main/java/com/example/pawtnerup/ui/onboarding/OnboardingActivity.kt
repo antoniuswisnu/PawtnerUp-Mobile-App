@@ -12,11 +12,9 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.pawtnerup.R
-import com.example.pawtnerup.data.pref.UserModel
+import com.example.pawtnerup.data.model.UserModel
 import com.example.pawtnerup.databinding.ActivityOnboardingBinding
-import com.example.pawtnerup.ui.home.HomeFragment
-import com.example.pawtnerup.ui.main.MainActivity
-import com.example.pawtnerup.ui.questionnaire.QuestionnaireActivity
+import com.example.pawtnerup.ui.questionnaire.QuestionnaireTextActivity
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -68,7 +66,7 @@ class OnboardingActivity : AppCompatActivity() {
                     @Suppress
                     intent.getParcelableExtra<UserModel>("userData")
                 }
-                val intent = Intent(this, QuestionnaireActivity::class.java)
+                val intent = Intent(this, QuestionnaireTextActivity::class.java)
                 intent.putExtra("userData", userModel)
                 startActivity(intent)
                 finish()

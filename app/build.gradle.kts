@@ -67,6 +67,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("androidx.cardview:cardview:1.0.0")
+    implementation("com.github.smarteist:autoimageslider:1.4.0")
 
     // Retrofit API
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -119,10 +120,5 @@ dependencies {
 
     // HTTP
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
-
-    // google api client
-//    implementation("com.google.api-client:google-api-client:1.31.5")
-
-
 
 }

@@ -1,10 +1,11 @@
 package com.example.pawtnerup.ui.questionnaire
 
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.pawtnerup.data.pref.UserModel
+import android.util.Log
+import android.widget.Toast
+import com.example.pawtnerup.data.model.QuestionnaireModel
 import com.example.pawtnerup.databinding.ActivityQuestionnaireTextBinding
 
 class QuestionnaireTextActivity : AppCompatActivity() {
@@ -15,8 +16,11 @@ class QuestionnaireTextActivity : AppCompatActivity() {
         "What personality in \n" +
                 "pet do you want?"
     )
-    private val answer = mutableListOf("", "")
+    private val listAnswer = mutableListOf("", "")
     private var currentQuestionIndex = 0
+    private var questionnaireModel = QuestionnaireModel("", "")
+    private var answer1 = ""
+    private var answer2 = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,33 +28,44 @@ class QuestionnaireTextActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnNext.setOnClickListener {
-            processAnswer()
-            currentQuestionIndex++
-            if(currentQuestionIndex == questions.size){
-                val userModel = if(Build.VERSION.SDK_INT >= 33){
-                    intent.getParcelableExtra("userData", UserModel::class.java)
-                } else {
-                    @Suppress
-                    intent.getParcelableExtra<UserModel>("userData")
-                }
-                val intent = Intent(this, QuestionnaireActivity::class.java)
-                intent.putExtra("userData", userModel)
-                startActivity(intent)
+            if(currentQuestionIndex == 0){
+                answer1 = binding.answerEditText.text.toString()
+                listAnswer[0] = answer1
+            } else {
+                answer2 = binding.answerEditText.text.toString()
+                listAnswer[1] = answer2
             }
+            processAnswer()
         }
     }
-    private fun processAnswer(){
+
+    private fun displayQuestion(){
         if(currentQuestionIndex < questions.size){
             binding.questionTextView.text = questions[currentQuestionIndex]
+        } else {
+            questionnaireModel = QuestionnaireModel(listAnswer[0], listAnswer[1])
 
-            if(currentQuestionIndex == 0){
-                val answer1 = binding.answerEditText.text.toString()
-                answer[0] = answer1
-            } else {
-                val answer2 = binding.answerEditText.text.toString()
-                answer[1] = answer2
-            }
+            val editor = getSharedPreferences("questionnaireData", MODE_PRIVATE).edit()
+            editor.putString("bio", listAnswer[0])
+            editor.putString("petPersonality", listAnswer[1])
+            editor.apply()
+
+            val intent = Intent(this, QuestionnaireActivity::class.java)
+            intent.putExtra("questionnaireData", questionnaireModel)
+            startActivity(intent)
         }
+    }
+
+    private fun processAnswer(){
+        binding.answerEditText.text.clear()
+        currentQuestionIndex++
+        Toast.makeText(this, "$listAnswer", Toast.LENGTH_SHORT).show()
+        displayQuestion()
+
+        Log.d(TAG, "DATA Model : $questionnaireModel")
+        Log.d(TAG, "answer1: $answer1")
+        Log.d(TAG, "answer2: $answer2")
+        Log.d(TAG, "List Answerrrr: $listAnswer")
     }
     companion object {
         private const val TAG = "QuestionnaireTextActivityWisnu"

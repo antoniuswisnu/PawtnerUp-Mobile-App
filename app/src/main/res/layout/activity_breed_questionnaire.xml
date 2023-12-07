@@ -1,11 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:background="@color/background"
-    tools:context=".ui.questionnaire.QuestionnaireActivity">
+    android:orientation="vertical"
+    tools:context=".ui.questionnaire.BreedQuestionnaireActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,7 +22,7 @@
         android:id="@+id/questionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Which dog's size \n do you preferred?"
+        android:text="Which dog's breed \n do you preferred?"
         android:textColor="@color/black"
         android:textAlignment="center"
         android:fontFamily="@font/poppins"
@@ -31,43 +32,16 @@
         android:layout_gravity="center_horizontal"
         android:textSize="20sp" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
         android:layout_marginTop="32dp"
-        android:layout_marginStart="32dp"
-        >
-
-        <CheckBox
-            android:id="@+id/rb1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Giant"
-            />
-
-        <CheckBox
-            android:id="@+id/rb2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Big"
-            />
-
-        <CheckBox
-            android:id="@+id/rb3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Medium"
-            />
-
-        <CheckBox
-            android:id="@+id/rb4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Small"
-            />
-
-    </RadioGroup>
+        android:layout_gravity="center"
+        android:background="@drawable/custom_spinner"
+        />
 
     <Button
         android:id="@+id/btnNext"
@@ -77,11 +51,25 @@
         android:textColor="@color/white"
         android:fontFamily="@font/poppins_bold"
         android:textSize="16sp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:textAllCaps="false"
         android:background="@drawable/custom_button"
-        android:text="Next" />
+        android:text="Submit" />
+
+    <Button
+        android:id="@+id/btnTest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="16sp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:textAllCaps="false"
+        android:background="@drawable/custom_button"
+        android:text="Test" />
 
 
 </LinearLayout>
