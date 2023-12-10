@@ -17,20 +17,15 @@ interface ApiService {
     fun getPets(): Call<PetResponse>
 
     @GET("pets/breeds")
-    suspend fun getBreeds(
-        @Query("id") dogId: String,
-        @Query("name") dogName: String
-    ): Call<BreedResponse>
+    fun getBreeds(): Call<BreedResponse>
 
     @FormUrlEncoded
     @POST("adopters/questionnaire")
     fun postQuestionnaire(
-        @Field("bio") bio: String,
-        @Field("pet_personality") petPersonality: String,
         @Field("pet_sizes") petSizes: ArrayList<String>,
         @Field("pet_ages") petAges: ArrayList<String>,
         @Field("pet_genders") petGenders: ArrayList<String>,
-        @Field("pet_breeds") petBreeds: Int,
+        @Field("pet_breeds") petBreeds: ArrayList<Int>,
     ): Call<QuestionnaireResponse>
 
 

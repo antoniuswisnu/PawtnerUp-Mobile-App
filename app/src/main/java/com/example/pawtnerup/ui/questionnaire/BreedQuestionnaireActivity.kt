@@ -5,11 +5,17 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import com.example.pawtnerup.api.response.PetResponse
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.pawtnerup.api.response.BreedItem
+import com.example.pawtnerup.api.response.BreedResponse
 import com.example.pawtnerup.api.response.QuestionnaireResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
-import com.example.pawtnerup.data.model.QuestionnaireModel
+import com.example.pawtnerup.data.model.BreedModel
 import com.example.pawtnerup.data.model.QuestionnaireModel2
 import com.example.pawtnerup.databinding.ActivityBreedQuestionnaireBinding
 import com.example.pawtnerup.ui.main.MainActivity
@@ -17,6 +23,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,9 +40,14 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
     private var petSizes = ArrayList<String>()
     private var petAges = ArrayList<String>()
     private var petGenders = ArrayList<String>()
-    private var petBreeds = 0
-    private val allData = ArrayList<String>()
+    private var petBreeds: Int? = null
+    private var allPetBreeds = ArrayList<Int>()
+    private val allData = ArrayList<Any>()
     private var account: GoogleSignInAccount? = null
+
+    private val selectedItems = mutableListOf<BreedModel>()
+    private lateinit var recyclerView: RecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBreedQuestionnaireBinding.inflate(layoutInflater)
@@ -45,7 +60,35 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         account = GoogleSignIn.getLastSignedInAccount(this)
 
+        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ){
+                val selectedItem = parent?.getItemAtPosition(position).toString()
+                val selectedId = parent?.getItemIdAtPosition(position).toString()
+                petBreeds = selectedId.toInt()
+
+                allPetBreeds.add(petBreeds!!)
+                addSelectedItem(BreedModel(selectedItem))
+
+                Log.d(TAG, "allPetBreeds: $allPetBreeds")
+                Log.d(TAG, "BreedModel : $selectedItems")
+
+                Log.d(TAG, "onItemSelected: $selectedItem")
+                Toast.makeText(this@BreedQuestionnaireActivity, selectedItem, Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO()
+            }
+
+        }
+
         getDogBreeds()
+        setupRecyclerView()
 
         binding.btnNext.setOnClickListener {
             postQuestionnaire()
@@ -57,39 +100,99 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
     }
 
     private fun getDogBreeds(){
-        val client = ApiConfig.getApiService(account?.idToken.toString()).getPets()
-        client.enqueue(object : Callback<PetResponse> {
+        val client = ApiConfig.getApiService(account?.idToken.toString()).getBreeds()
+        client.enqueue(object : Callback<BreedResponse> {
             override fun onResponse(
-                call: Call<PetResponse>,
-                response: Response<PetResponse>
+                call: Call<BreedResponse>,
+                response: Response<BreedResponse>
             ) {
                 if (response.isSuccessful){
                     val responseBody = response.body()
                     val dogBreeds = responseBody?.data
 
-                    // logic to get dog breeds
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            withContext(Dispatchers.Main) {
+                                if (dogBreeds != null) {
+                                    updateSpinner(dogBreeds)
+
+                                }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
 
 
                     Log.d(TAG, "onResponse: $dogBreeds")
-                    Toast.makeText(this@BreedQuestionnaireActivity, "$dogBreeds", Toast.LENGTH_SHORT).show()
                 }
             }
-            override fun onFailure(call: Call<PetResponse>, t: Throwable) {
+            override fun onFailure(call: Call<BreedResponse>, t: Throwable) {
                 Log.d(TAG, "onFailure: ${t.message}")
-                TODO("Not yet implemented")
             }
 
         })
     }
 
-    private fun testData(){
-        val questionnaireModel = if(Build.VERSION.SDK_INT >= 33){
-            intent.getParcelableExtra("questionnaireData", QuestionnaireModel::class.java)
-        } else {
-            @Suppress
-            intent.getParcelableExtra<QuestionnaireModel>("questionnaireData")
-        }
+    private fun updateSpinner(data: List<BreedItem?>) {
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            data.map { it?.name }
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinner.adapter = adapter
+    }
 
+    private fun addSelectedItem(item: BreedModel) {
+        selectedItems.add(item)
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    private fun removeSelectedItem(position: Int) {
+        selectedItems.removeAt(position)
+        allPetBreeds.removeAt(position)
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    private fun setupRecyclerView() {
+        recyclerView = binding.rvBreed
+        recyclerView.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        recyclerView.adapter = BreedAdapter(
+            selectedItems,
+            onDeleteClick = { position ->
+                removeSelectedItem(position)
+            }
+        )
+
+
+    }
+
+//    private fun createRecyclerViewAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder> {
+//        return object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+//            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+//                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_breed, parent, false)
+//                return object : RecyclerView.ViewHolder(view) {}
+//            }
+//
+//            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+//                val item = selectedItems[position]
+//                val itemName = holder.itemView.findViewById<TextView>(R.id.tvBreed)
+//                val deleteButton = holder.itemView.findViewById<ImageView>(R.id.deleteBreed)
+//
+//                itemName.text = item
+//                deleteButton.setOnClickListener {
+//                    removeSelectedItem(position)
+//                }
+//            }
+//
+//            override fun getItemCount(): Int {
+//                return selectedItems.size
+//            }
+//        }
+//    }
+
+    private fun testData(){
         val questionnaireModel2 = if(Build.VERSION.SDK_INT >= 33){
             intent.getParcelableExtra("questionnaireData2", QuestionnaireModel2::class.java)
         } else {
@@ -97,50 +200,35 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
             intent.getParcelableExtra<QuestionnaireModel2>("questionnaireData2")
         }
 
-        bio = questionnaireModel?.bio.toString()
-        petPersonality = questionnaireModel?.petPersonality.toString()
         petSizes = questionnaireModel2?.petSizes!!
         petAges = questionnaireModel2.petAges!!
         petGenders = questionnaireModel2.petGenders!!
 
-        allData.add(bio)
-        allData.add(petPersonality)
         allData.addAll(petSizes)
         allData.addAll(petAges)
         allData.addAll(petGenders)
+        allData.add(allPetBreeds)
 
         Log.d(TAG, "testData: $allData")
         Toast.makeText(this, "$allData", Toast.LENGTH_SHORT).show()
     }
 
     private fun postQuestionnaire(){
-        val questionnaireModel = if(Build.VERSION.SDK_INT >= 33){
-            intent.getParcelableExtra("questionnaireData", QuestionnaireModel::class.java)
-        } else {
-            @Suppress
-            intent.getParcelableExtra<QuestionnaireModel>("questionnaireData")
-        }
-
         val questionnaireModel2 = if(Build.VERSION.SDK_INT >= 33){
             intent.getParcelableExtra("questionnaireData2", QuestionnaireModel2::class.java)
         } else {
             @Suppress
             intent.getParcelableExtra<QuestionnaireModel2>("questionnaireData2")
         }
-
-        bio = questionnaireModel?.bio.toString()
-        petPersonality = questionnaireModel?.petPersonality.toString()
         petSizes = questionnaireModel2?.petSizes!!
         petAges = questionnaireModel2.petAges!!
         petGenders = questionnaireModel2.petGenders!!
 
         val client = ApiConfig.getApiService(account?.idToken.toString()).postQuestionnaire(
-            bio,
-            petPersonality,
             petSizes,
             petAges,
             petGenders,
-            petBreeds
+            allPetBreeds
         )
         client.enqueue(object : Callback<QuestionnaireResponse> {
             override fun onResponse(
@@ -157,6 +245,8 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
 //                    val petBreeds = responseBody?.petBreeds
 
                     Log.d(TAG, "onResponse: $bio")
+
+                    Toast.makeText(this@BreedQuestionnaireActivity, "Success", Toast.LENGTH_SHORT).show()
                 }
             }
 

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.pawtnerup.data.model.QuestionnaireModel
 import com.example.pawtnerup.data.model.QuestionnaireModel2
 import com.example.pawtnerup.databinding.ActivityQuestionnaireBinding
 
@@ -35,6 +34,7 @@ class QuestionnaireActivity : AppCompatActivity() {
     private var listAnswer1 = ArrayList<String>()
     private var listAnswer2 = ArrayList<String>()
     private var listAnswer3 = ArrayList<String>()
+    private var listAnswer4 = ArrayList<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,18 +111,11 @@ class QuestionnaireActivity : AppCompatActivity() {
             }
 
         } else {
-            val questionnaireModel = if (Build.VERSION.SDK_INT >= 33){
-                intent.getParcelableExtra("questionnaireData", QuestionnaireModel::class.java)
-            } else {
-                @Suppress
-                intent.getParcelableExtra<QuestionnaireModel>("questionnaireData")
-            }
-
             val questionnaireModel2 = QuestionnaireModel2(
                 listAnswer1,
                 listAnswer2,
                 listAnswer3,
-                0
+                listAnswer4
             )
 
             val editor = getSharedPreferences("questionnaireData2", MODE_PRIVATE).edit()
@@ -132,7 +125,6 @@ class QuestionnaireActivity : AppCompatActivity() {
             editor.apply()
 
             val intent = Intent(this, BreedQuestionnaireActivity::class.java)
-            intent.putExtra("questionnaireData", questionnaireModel)
             intent.putExtra("questionnaireData2", questionnaireModel2)
             startActivity(intent)
         }

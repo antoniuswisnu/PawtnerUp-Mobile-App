@@ -12,9 +12,8 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.example.pawtnerup.R
-import com.example.pawtnerup.data.model.UserModel
 import com.example.pawtnerup.databinding.ActivityOnboardingBinding
-import com.example.pawtnerup.ui.questionnaire.QuestionnaireTextActivity
+import com.example.pawtnerup.ui.questionnaire.QuestionnaireActivity
 
 class OnboardingActivity : AppCompatActivity() {
 
@@ -60,16 +59,8 @@ class OnboardingActivity : AppCompatActivity() {
             if (binding.onboardingViewPager.currentItem + 1 < onboardingAdapter.itemCount) {
                 binding.onboardingViewPager.currentItem += binding.onboardingViewPager.currentItem
             } else {
-                val userModel = if(Build.VERSION.SDK_INT >= 33){
-                    intent.getParcelableExtra("userData", UserModel::class.java)
-                } else {
-                    @Suppress
-                    intent.getParcelableExtra<UserModel>("userData")
-                }
-                val intent = Intent(this, QuestionnaireTextActivity::class.java)
-                intent.putExtra("userData", userModel)
+                val intent = Intent(this, QuestionnaireActivity::class.java)
                 startActivity(intent)
-                finish()
             }
         }
     }

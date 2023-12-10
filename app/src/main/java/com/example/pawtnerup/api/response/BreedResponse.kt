@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class BreedResponse(
 
 	@field:SerializedName("data")
-	val data: List<BreedItem?>? = null,
+	val data: List<BreedItem?>,
 
 	@field:SerializedName("message")
 	val message: String? = null
