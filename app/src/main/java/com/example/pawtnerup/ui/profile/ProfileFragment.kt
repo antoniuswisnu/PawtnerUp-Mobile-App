@@ -20,7 +20,6 @@ class ProfileFragment : Fragment() {
     private lateinit var binding : FragmentProfileBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,17 +27,6 @@ class ProfileFragment : Fragment() {
     ): View {
         profileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-
-//        val userModel = if(Build.VERSION.SDK_INT >= 33){
-//            activity?.intent?.getParcelableExtra("userData",UserModel::class.java)
-//        } else {
-//            @Suppress
-//            activity?.intent?.getParcelableExtra<UserModel>("userData")
-//        }
-//
-//        val name = userModel?.displayName
-//        val email = userModel?.email
-//        val photoUrl = userModel?.photoUrl
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()

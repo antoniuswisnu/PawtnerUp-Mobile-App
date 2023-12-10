@@ -75,17 +75,6 @@ class QuestionnaireActivity : AppCompatActivity() {
         binding.btnNext.setOnClickListener {
             processAnswer()
             Log.d(TAG, "processAnswer: $listAnswer1 $listAnswer2 $listAnswer3")
-
-            if (currentQuestionIndex == 0){
-                Toast.makeText(this, "$listAnswer1", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "listAnswer1: $listAnswer1")
-            } else if (currentQuestionIndex == 1){
-                Toast.makeText(this, "$listAnswer2", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "listAnswer2: $listAnswer2")
-            } else {
-                Toast.makeText(this, "$listAnswer3", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "listAnswer3: $listAnswer3")
-            }
         }
     }
 

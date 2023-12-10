@@ -1,5 +1,7 @@
 package com.example.pawtnerup.ui.onboarding
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
@@ -28,17 +30,17 @@ class OnboardingActivity : AppCompatActivity() {
         onboardingAdapter = OnboardingPagerAdapter(
             listOf(
                 OnBoardingItem(
-                    R.drawable.dog1,
+                    R.raw.animation1,
                     "Welcome to PawtnerUp",
                     "Adopt Don’t Shop!"
                 ),
                 OnBoardingItem(
-                    R.drawable.dog2,
+                    R.raw.animation2,
                     "Make a New Friend",
                     "After this there will be a questionnaire to help us to recommend your future pet "
                 ),
                 OnBoardingItem(
-                    R.drawable.dog3,
+                    R.raw.animation3,
                     "Enjoy The App!",
                     "Adopt Don’t Shop"
                 )
@@ -100,4 +102,6 @@ class OnboardingActivity : AppCompatActivity() {
             binding.buttonOnBoardingAction.visibility = View.GONE
         }
     }
+
+
 }

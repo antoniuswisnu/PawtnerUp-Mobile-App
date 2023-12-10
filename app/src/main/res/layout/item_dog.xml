@@ -26,7 +26,7 @@
             android:layout_height="match_parent">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/circleImageView2"
+                android:id="@+id/ivDog"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_marginStart="32dp"
@@ -47,7 +47,7 @@
                 android:textSize="16sp"
                 android:maxLines="1"
                 app:layout_constraintBottom_toTopOf="@+id/tvDogType"
-                app:layout_constraintStart_toEndOf="@+id/circleImageView2"
+                app:layout_constraintStart_toEndOf="@+id/ivDog"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -62,7 +62,7 @@
                 android:maxLines="1"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/circleImageView2" />
+                app:layout_constraintStart_toEndOf="@+id/ivDog" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

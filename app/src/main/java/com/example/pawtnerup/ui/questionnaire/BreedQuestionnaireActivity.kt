@@ -18,7 +18,7 @@ import com.example.pawtnerup.api.retrofit.ApiConfig
 import com.example.pawtnerup.data.model.BreedModel
 import com.example.pawtnerup.data.model.QuestionnaireModel2
 import com.example.pawtnerup.databinding.ActivityBreedQuestionnaireBinding
-import com.example.pawtnerup.ui.main.MainActivity
+import com.example.pawtnerup.ui.splash.LoadingActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -35,15 +35,14 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBreedQuestionnaireBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private var bio = ""
-    private var petPersonality = ""
+    private var account: GoogleSignInAccount? = null
+
     private var petSizes = ArrayList<String>()
     private var petAges = ArrayList<String>()
     private var petGenders = ArrayList<String>()
     private var petBreeds: Int? = null
     private var allPetBreeds = ArrayList<Int>()
     private val allData = ArrayList<Any>()
-    private var account: GoogleSignInAccount? = null
 
     private val selectedItems = mutableListOf<BreedModel>()
     private lateinit var recyclerView: RecyclerView
@@ -115,15 +114,12 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                             withContext(Dispatchers.Main) {
                                 if (dogBreeds != null) {
                                     updateSpinner(dogBreeds)
-
                                 }
                             }
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
                     }
-
-
                     Log.d(TAG, "onResponse: $dogBreeds")
                 }
             }
@@ -164,33 +160,7 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                 removeSelectedItem(position)
             }
         )
-
-
     }
-
-//    private fun createRecyclerViewAdapter(): RecyclerView.Adapter<RecyclerView.ViewHolder> {
-//        return object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-//            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-//                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_breed, parent, false)
-//                return object : RecyclerView.ViewHolder(view) {}
-//            }
-//
-//            override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-//                val item = selectedItems[position]
-//                val itemName = holder.itemView.findViewById<TextView>(R.id.tvBreed)
-//                val deleteButton = holder.itemView.findViewById<ImageView>(R.id.deleteBreed)
-//
-//                itemName.text = item
-//                deleteButton.setOnClickListener {
-//                    removeSelectedItem(position)
-//                }
-//            }
-//
-//            override fun getItemCount(): Int {
-//                return selectedItems.size
-//            }
-//        }
-//    }
 
     private fun testData(){
         val questionnaireModel2 = if(Build.VERSION.SDK_INT >= 33){
@@ -237,15 +207,6 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
-                    val bio = responseBody?.bio
-                    val petPersonality = responseBody?.petPersonality
-                    val petSizes = responseBody?.petSizes
-                    val petAges = responseBody?.petAges
-                    val petGenders = responseBody?.petGenders
-//                    val petBreeds = responseBody?.petBreeds
-
-                    Log.d(TAG, "onResponse: $bio")
-
                     Toast.makeText(this@BreedQuestionnaireActivity, "Success", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -255,7 +216,7 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
             }
 
         })
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, LoadingActivity::class.java)
         startActivity(intent)
     }
 

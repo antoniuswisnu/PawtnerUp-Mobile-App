@@ -37,4 +37,6 @@
     <string name="dark_mode_on">Dark mode</string>
     <string name="dark_mode_off">Light mode</string>
     <string name="questionnaire">Questionnaire</string>
+    <string name="find_your_n_pawtner">Find Your \n Pawtner</string>
+    <string name="sign_in">Sign In</string>
 </resources>

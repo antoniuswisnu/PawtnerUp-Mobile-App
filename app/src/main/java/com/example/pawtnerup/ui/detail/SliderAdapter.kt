@@ -8,10 +8,10 @@ import com.bumptech.glide.Glide
 import com.example.pawtnerup.R
 import com.smarteist.autoimageslider.SliderViewAdapter
 
-class SliderAdapter(imageUrl: ArrayList<String>) :
+class SliderAdapter(image: List<Int>) :
     SliderViewAdapter<SliderAdapter.SliderViewHolder>() {
 
-    var sliderList: ArrayList<String> = imageUrl
+    var sliderList: List<Int> = image
 
     override fun getCount(): Int {
         return sliderList.size
@@ -25,7 +25,6 @@ class SliderAdapter(imageUrl: ArrayList<String>) :
     }
 
     override fun onBindViewHolder(viewHolder: SliderViewHolder?, position: Int) {
-
         if (viewHolder != null) {
             Glide.with(viewHolder.itemView).load(sliderList[position]).fitCenter()
                 .into(viewHolder.imageView)
@@ -33,7 +32,6 @@ class SliderAdapter(imageUrl: ArrayList<String>) :
     }
 
     class SliderViewHolder(itemView: View?) : ViewHolder(itemView) {
-
         var imageView: ImageView = itemView!!.findViewById(R.id.myimage)
     }
 }

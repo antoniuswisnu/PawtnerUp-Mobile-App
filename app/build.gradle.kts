@@ -121,4 +121,8 @@ dependencies {
     // HTTP
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
+    // Lottie
+    val lottieVersion = "3.4.0"
+    implementation("com.airbnb.android:lottie:$lottieVersion")
+
 }

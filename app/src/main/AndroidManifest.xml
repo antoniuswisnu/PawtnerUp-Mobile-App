@@ -5,17 +5,19 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo_border"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo_border"
         android:supportsRtl="true"
         android:theme="@style/Theme.PawtnerUp"
         tools:targetApi="31">
+        <activity
+            android:name=".ui.splash.LoadingActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.questionnaire.BreedQuestionnaireActivity"
             android:exported="false" />

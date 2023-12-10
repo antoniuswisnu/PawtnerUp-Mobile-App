@@ -4,9 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 data class QuestionnaireResponse(
 
-	@field:SerializedName("bio")
-	val bio: String? = null,
-
 	@field:SerializedName("pet_genders")
 	val petGenders: ArrayList<String>? = null,
 
@@ -15,9 +12,6 @@ data class QuestionnaireResponse(
 
 	@field:SerializedName("breed_ids")
 	val breedIds: List<Int>? = null,
-
-	@field:SerializedName("pet_personality")
-	val petPersonality: String? = null,
 
 	@field:SerializedName("pet_sizes")
 	val petSizes: ArrayList<String>? = null
