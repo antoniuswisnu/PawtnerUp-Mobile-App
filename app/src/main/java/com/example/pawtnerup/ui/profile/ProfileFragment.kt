@@ -1,15 +1,20 @@
 package com.example.pawtnerup.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.example.pawtnerup.R
 import com.example.pawtnerup.databinding.FragmentProfileBinding
+import com.example.pawtnerup.ui.login.LoginActivity
+import com.example.pawtnerup.ui.report.ReportActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -54,12 +59,20 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.imgSettings.setOnClickListener{
-            view.findNavController().navigate(R.id.action_navigation_profile_to_settingActivity)
+
+        binding.csReport.setOnClickListener{
+            startActivity(Intent(requireActivity(), ReportActivity::class.java))
         }
 
-        binding.imgReport.setOnClickListener{
-            view.findNavController().navigate(R.id.action_navigation_profile_to_reportActivity2)
+        binding.csLanguage.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
+        }
+
+        binding.csLogout.setOnClickListener {
+            mGoogleSignInClient.signOut().addOnCompleteListener {
+                startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                requireActivity().finish()
+            }
         }
     }
 }

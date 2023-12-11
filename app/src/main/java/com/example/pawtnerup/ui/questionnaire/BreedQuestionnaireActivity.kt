@@ -113,7 +113,32 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                         try {
                             withContext(Dispatchers.Main) {
                                 if (dogBreeds != null) {
-                                    updateSpinner(dogBreeds)
+                                    if (petSizes.contains("Giant")){
+                                        updateSpinner(
+                                            dogBreeds.filter {
+                                                it?.size == "Giant"
+                                            }
+                                        )
+                                    } else if (petSizes.contains("Large")){
+                                        updateSpinner(
+                                            dogBreeds.filter {
+                                                it?.size == "Large"
+                                            }
+                                        )
+                                    } else if (petSizes.contains("Medium")){
+                                        updateSpinner(
+                                            dogBreeds.filter {
+                                                it?.size == "Medium"
+                                            })
+                                    } else if (petSizes.contains("Small")) {
+                                        updateSpinner(
+                                            dogBreeds.filter {
+                                                it?.size == "Small"
+                                            })
+                                    } else {
+                                        updateSpinner(dogBreeds)
+                                    }
+
                                 }
                             }
                         } catch (e: Exception) {

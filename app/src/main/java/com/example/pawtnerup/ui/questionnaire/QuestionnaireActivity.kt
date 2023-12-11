@@ -1,5 +1,6 @@
 package com.example.pawtnerup.ui.questionnaire
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -71,6 +72,8 @@ class QuestionnaireActivity : AppCompatActivity() {
                 }
             }
         }
+
+        playAnimation()
 
         binding.btnNext.setOnClickListener {
             processAnswer()
@@ -168,6 +171,23 @@ class QuestionnaireActivity : AppCompatActivity() {
 
         currentQuestionIndex++
         displayQuestion()
+    }
+
+    fun playAnimation(){
+        val tvTitle = ObjectAnimator.ofFloat(binding.tvTitle, android.view.View.ALPHA, 1f).setDuration(400)
+        val tvQuestion = ObjectAnimator.ofFloat(binding.questionTextView, android.view.View.ALPHA, 1f).setDuration(400)
+        val rbGroup = ObjectAnimator.ofFloat(binding.radioGroup, android.view.View.ALPHA, 1f).setDuration(400)
+        val btnNext = ObjectAnimator.ofFloat(binding.btnNext, android.view.View.ALPHA, 1f).setDuration(400)
+
+        android.animation.AnimatorSet().apply {
+            playSequentially(
+                tvTitle,
+                tvQuestion,
+                rbGroup,
+                btnNext
+            )
+            startDelay = 500
+        }.start()
     }
 
     companion object {

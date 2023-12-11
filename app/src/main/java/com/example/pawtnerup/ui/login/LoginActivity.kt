@@ -110,7 +110,7 @@ class LoginActivity : AppCompatActivity() {
                 title,
                 buttonLogin
             )
-            startDelay = 100
+            startDelay = 300
         }.start()
     }
 

@@ -8,12 +8,15 @@
     tools:context=".ui.questionnaire.QuestionnaireActivity">
 
     <TextView
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/questionnaire"
         android:textColor="@color/primary"
         android:fontFamily="@font/poppins_bold"
         android:layout_marginTop="150dp"
+        android:alpha="0"
+        tools:alpha="100"
         android:layout_gravity="center_horizontal"
         android:textSize="24sp" />
 
@@ -24,6 +27,8 @@
         android:text="Which dog's size \n do you preferred?"
         android:textColor="@color/black"
         android:textAlignment="center"
+        android:alpha="0"
+        tools:alpha="100"
         android:fontFamily="@font/poppins"
         android:layout_marginTop="32dp"
         android:layout_marginStart="8dp"
@@ -37,6 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginStart="32dp"
+        android:alpha="0"
+        tools:alpha="100"
         >
 
         <CheckBox
@@ -80,6 +87,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:textAllCaps="false"
+        android:alpha="0"
+        tools:alpha="100"
         android:background="@drawable/custom_button"
         android:text="Next" />
 

@@ -29,16 +29,7 @@ class SettingActivity : AppCompatActivity() {
 
         mGoogleSignInClient =  GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN)
 
-        binding.btnLogout.setOnClickListener {
-            mGoogleSignInClient.signOut().addOnCompleteListener {
-                val editor = getSharedPreferences("userData", MODE_PRIVATE).edit()
-                editor.clear()
-                editor.apply()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-        }
+
 
     }
 }
