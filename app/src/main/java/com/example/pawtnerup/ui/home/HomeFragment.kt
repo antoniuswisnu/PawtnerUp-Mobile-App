@@ -1,16 +1,16 @@
 package com.example.pawtnerup.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
-import com.example.pawtnerup.api.response.AdopterResponse
-import com.example.pawtnerup.api.response.PetAdopter
+import androidx.lifecycle.lifecycleScope
+import com.example.pawtnerup.api.response.RecommendationItem
+import com.example.pawtnerup.api.response.RecommendationResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
-import com.example.pawtnerup.data.model.DogModel
 import com.example.pawtnerup.databinding.FragmentHomeBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -19,6 +19,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,11 +30,9 @@ class HomeFragment : Fragment() {
 
     private  lateinit var binding: FragmentHomeBinding
     private lateinit var manager: CardStackLayoutManager
-//    private lateinit var homeViewModel: HomeViewModel
-    private lateinit var list : ArrayList<PetAdopter>
+    private lateinit var list : ArrayList<RecommendationResponse>
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private var account: GoogleSignInAccount? = null
-    private var petId: Int? = null
 
 
     override fun onCreateView(
@@ -42,17 +42,18 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-//        homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
             .build()
+
+        list = arrayListOf()
 
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         account = GoogleSignIn.getLastSignedInAccount(requireActivity())
 
         getDog()
         init()
+
         return binding.root
     }
 
@@ -64,16 +65,8 @@ class HomeFragment : Fragment() {
             override fun onCardSwiped(direction: Direction?) {
 
                 if (direction == Direction.Right){
-//                    homeViewModel.isLoading.observe(viewLifecycleOwner) {
-//                        showLoading(it)
-//                    }
-//                    homeViewModel.postLikeDog(petId!!, "LIKE")
                     Toast.makeText(requireContext(), "You have liked this dog", Toast.LENGTH_SHORT).show()
                 } else if (direction == Direction.Left){
-//                    homeViewModel.isLoading.observe(viewLifecycleOwner) {
-//                        showLoading(it)
-//                    }
-//                    homeViewModel.postLikeDog(petId!!, "LIKE")
                     Toast.makeText(requireContext(), "You have disliked this dog", Toast.LENGTH_SHORT).show()
                 } else if (manager.topPosition == list.size){
                     Toast.makeText(requireContext(), "You have reached the end", Toast.LENGTH_SHORT).show()
@@ -101,40 +94,45 @@ class HomeFragment : Fragment() {
         manager.setDirections(Direction.HORIZONTAL)
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
-    }
-
     private fun getDog(){
-        val client = ApiConfig.getApiService(account?.idToken.toString()).getAdopter()
-        client.enqueue(object : Callback<AdopterResponse> {
+        val client = ApiConfig.getApiService(account?.idToken.toString()).getRecommendations()
+        Log.d(TAG, "idToken: ${account?.idToken.toString()}")
+        client.enqueue(object : Callback<RecommendationResponse> {
             override fun onResponse(
-                call: Call<AdopterResponse>,
-                response: Response<AdopterResponse>
+                call: Call<RecommendationResponse>,
+                response: Response<RecommendationResponse>
             ) {
                 if (response.isSuccessful){
-                    petId = response.body()?.dataAdopter?.preferences?.get(0)?.petId
-                    val body = response.body()?.dataAdopter?.preferences
+                    val body = response.body()
+                    Log.d(TAG, "onResponse: $body")
                     if (body != null){
-                        for (data in body){
-                            val dog = data?.pet
-                            list.add(dog!!)
+                        for (i in 0 until body.data?.size!!){
+                            list.add(body)
                         }
                         list.shuffle()
                         binding.cardStackView.layoutManager = manager
                         binding.cardStackView.adapter = HomeAdapter(requireContext(), list)
                     }
+                } else{
 
+                    Toast.makeText(requireContext(), "No data found", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "onResponse: ${response.message()} ${response.code()} ${response.errorBody()} ${response.raw()}")
                 }
+                Log.d(TAG, "List: $list")
+
+                Log.d(TAG, "onResponse: ${response.body()} ${response.code()} ${response.message()} ${response.errorBody()} ${response.isSuccessful}")
             }
 
-            override fun onFailure(call: Call<AdopterResponse>, t: Throwable) {
+            override fun onFailure(call: Call<RecommendationResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
             }
+
         })
+    }
+
+    companion object {
+        private const val TAG = "HomeFragment"
     }
 }
 

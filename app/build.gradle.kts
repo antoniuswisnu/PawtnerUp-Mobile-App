@@ -125,4 +125,7 @@ dependencies {
     val lottieVersion = "3.4.0"
     implementation("com.airbnb.android:lottie:$lottieVersion")
 
+    // chucker
+    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
 }

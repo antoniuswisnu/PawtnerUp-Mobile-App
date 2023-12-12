@@ -19,10 +19,10 @@ class QuestionnaireActivity : AppCompatActivity() {
         "Which dog's gender \n do you preferred?"
     )
     private val answerChoice1 = listOf(
-         "Giant", "Large", "Medium", "Small"
+         "Giant", "Big", "Medium", "Small"
     )
     private val answerChoice2 = listOf(
-        "Puppy (0 - 6 Months)", "Young  (6 - 12 Months)", "Adult (1 - 7 Years) ", "Senior (> 7 Years)"
+        "Puppy", "Young", "Adult", "Senior"
     )
     private val answerChoice3 = listOf(
         "Male", "Female"

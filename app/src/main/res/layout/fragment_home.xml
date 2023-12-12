@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment"
+    android:theme="@style/Theme.Material"
     tools:ignore="MissingClass">
 
     <TextView
@@ -29,14 +30,6 @@
         android:layout_gravity="center"
          />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:translationZ="2dp"
-        android:layout_gravity="center"
-        tools:visibility="visible" />
+
 
 </FrameLayout>

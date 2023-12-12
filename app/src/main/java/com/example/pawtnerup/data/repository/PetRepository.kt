@@ -12,17 +12,19 @@ class PetRepository(private val apiService: ApiService){
     fun getPets(): Call<PetResponse> {
         return apiService.getPets()
     }
-    fun getBreeds(dogId: String, dogName: String) : Call<BreedResponse> {
-        return apiService.getBreeds()
-    }
-    fun postQuestionnaire(petSizes: ArrayList<String>, petAges: ArrayList<String>, petGenders: ArrayList<String>, petBreeds: ArrayList<Int>) : Call<QuestionnaireResponse> {
-        return apiService.postQuestionnaire(
-            petSizes,
-            petAges,
-            petGenders,
-            petBreeds
-        )
-    }
+//    fun getBreeds(size: String) : Call<BreedResponse> {
+//        return apiService.getBreeds(
+//            size
+//        )
+//    }
+//    fun postQuestionnaire(petSizes: ArrayList<String>, petAges: ArrayList<String>, petGenders: ArrayList<String>, petBreeds: ArrayList<Int>) : Call<QuestionnaireResponse> {
+//        return apiService.postQuestionnaire(
+//            petSizes,
+//            petAges,
+//            petGenders,
+//            petBreeds
+//        )
+//    }
 
     fun getAdopter() : Call<AdopterResponse> {
         return apiService.getAdopter()

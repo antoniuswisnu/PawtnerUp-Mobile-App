@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.pawtnerup.api.request.PostQuestionnaireRequest
 import com.example.pawtnerup.api.response.BreedItem
 import com.example.pawtnerup.api.response.BreedResponse
 import com.example.pawtnerup.api.response.QuestionnaireResponse
@@ -44,6 +45,8 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
     private var allPetBreeds = ArrayList<Int>()
     private val allData = ArrayList<Any>()
 
+    var listBreed: ArrayList<BreedItem> = ArrayList()
+
     private val selectedItems = mutableListOf<BreedModel>()
     private lateinit var recyclerView: RecyclerView
 
@@ -67,7 +70,8 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                 id: Long
             ){
                 val selectedItem = parent?.getItemAtPosition(position).toString()
-                val selectedId = parent?.getItemIdAtPosition(position).toString()
+
+                val selectedId = listBreed[position].id.toString()
                 petBreeds = selectedId.toInt()
 
                 allPetBreeds.add(petBreeds!!)
@@ -99,7 +103,18 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
     }
 
     private fun getDogBreeds(){
-        val client = ApiConfig.getApiService(account?.idToken.toString()).getBreeds()
+        val questionnaireModel2 = if(Build.VERSION.SDK_INT >= 33){
+            intent.getParcelableExtra("questionnaireData2", QuestionnaireModel2::class.java)
+        } else {
+            @Suppress
+            intent.getParcelableExtra<QuestionnaireModel2>("questionnaireData2")
+        }
+
+        petSizes = questionnaireModel2?.petSizes!!
+        val petSizeConvert = petSizes.toString().replace("[", "").replace("]", "").replace(" ","").uppercase()
+        Log.d(TAG, "getDogBreeds: $petSizeConvert")
+
+        val client = ApiConfig.getApiService(account?.idToken.toString()).getBreeds(petSizeConvert)
         client.enqueue(object : Callback<BreedResponse> {
             override fun onResponse(
                 call: Call<BreedResponse>,
@@ -109,36 +124,17 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                     val responseBody = response.body()
                     val dogBreeds = responseBody?.data
 
+                    Log.d(TAG, "petSizes: $petSizes")
+
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             withContext(Dispatchers.Main) {
                                 if (dogBreeds != null) {
-                                    if (petSizes.contains("Giant")){
-                                        updateSpinner(
-                                            dogBreeds.filter {
-                                                it?.size == "Giant"
-                                            }
-                                        )
-                                    } else if (petSizes.contains("Large")){
-                                        updateSpinner(
-                                            dogBreeds.filter {
-                                                it?.size == "Large"
-                                            }
-                                        )
-                                    } else if (petSizes.contains("Medium")){
-                                        updateSpinner(
-                                            dogBreeds.filter {
-                                                it?.size == "Medium"
-                                            })
-                                    } else if (petSizes.contains("Small")) {
-                                        updateSpinner(
-                                            dogBreeds.filter {
-                                                it?.size == "Small"
-                                            })
-                                    } else {
-                                        updateSpinner(dogBreeds)
+                                    listBreed.clear()
+                                    dogBreeds.forEach {
+                                        listBreed.add(it!!)
                                     }
-
+                                    updateSpinner(dogBreeds)
                                 }
                             }
                         } catch (e: Exception) {
@@ -219,11 +215,19 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         petAges = questionnaireModel2.petAges!!
         petGenders = questionnaireModel2.petGenders!!
 
-        val client = ApiConfig.getApiService(account?.idToken.toString()).postQuestionnaire(
-            petSizes,
-            petAges,
-            petGenders,
-            allPetBreeds
+        val client = ApiConfig.getApiServiceWithContext(this,account?.idToken.toString()).postQuestionnaire(
+            PostQuestionnaireRequest(
+                petGenders = petGenders.map {
+                    it.uppercase()
+                },
+                petAges = petAges.map {
+                    it.uppercase()
+                },
+                breedIds = allPetBreeds,
+                petSizes = petSizes.map {
+                    it.uppercase()
+                }
+            )
         )
         client.enqueue(object : Callback<QuestionnaireResponse> {
             override fun onResponse(
@@ -232,6 +236,7 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     val responseBody = response.body()
+
                     Toast.makeText(this@BreedQuestionnaireActivity, "Success", Toast.LENGTH_SHORT).show()
                 }
             }
