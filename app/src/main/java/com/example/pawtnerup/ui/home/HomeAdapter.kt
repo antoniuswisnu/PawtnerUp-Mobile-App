@@ -19,9 +19,12 @@ class HomeAdapter(val context: Context, private val list : ArrayList<Recommendat
     }
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         holder.binding.tvDogName.text = list[position].data?.get(position)?.name
-//        holder.binding.tvDogAge.text = list[position].data?.get(position)?.estimateAge.toString()
+        holder.binding.tvDogAge.text = list[position].data?.get(position)?.estimateAge.toString()
         holder.binding.tvDogBio.text = list[position].data?.get(position)?.rescueStory
-        Glide.with(context).load(list[position].data?.get(position)?.media?.get(0)).into(holder.binding.ivDog)
+
+        Glide.with(context)
+            .load(list[position].data?.get(position)?.media?.get(0))
+            .into(holder.binding.ivDog)
 
     }
 }

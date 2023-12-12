@@ -20,7 +20,7 @@ class BreedAdapter(private val items: MutableList<BreedModel>,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.itemName.text = item.name
-        holder.deleteButton.setOnClickListener {
+        holder.itemView.setOnClickListener {
             onDeleteClick.invoke(position)
         }
     }

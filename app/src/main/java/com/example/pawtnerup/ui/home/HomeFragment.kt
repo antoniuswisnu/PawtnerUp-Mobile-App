@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.example.pawtnerup.api.request.PostPreferencesRequest
+import com.example.pawtnerup.api.response.PreferencesResponse
 import com.example.pawtnerup.api.response.RecommendationItem
 import com.example.pawtnerup.api.response.RecommendationResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
@@ -65,8 +67,10 @@ class HomeFragment : Fragment() {
             override fun onCardSwiped(direction: Direction?) {
 
                 if (direction == Direction.Right){
+                    postLikeDog()
                     Toast.makeText(requireContext(), "You have liked this dog", Toast.LENGTH_SHORT).show()
                 } else if (direction == Direction.Left){
+                    postDislikeDog()
                     Toast.makeText(requireContext(), "You have disliked this dog", Toast.LENGTH_SHORT).show()
                 } else if (manager.topPosition == list.size){
                     Toast.makeText(requireContext(), "You have reached the end", Toast.LENGTH_SHORT).show()
@@ -131,34 +135,65 @@ class HomeFragment : Fragment() {
         })
     }
 
+    private fun postLikeDog(){
+        val client = ApiConfig.getApiServiceWithContext(requireActivity(), account?.idToken.toString()).postPreference(
+            PostPreferencesRequest(
+                preference = "LIKE",
+                petId = list[manager.topPosition].data?.get(manager.topPosition)?.id
+            )
+        )
+        client.enqueue(object : Callback<PreferencesResponse>{
+            override fun onResponse(
+                call: Call<PreferencesResponse>,
+                response: Response<PreferencesResponse>
+            ) {
+                if (response.isSuccessful){
+                    val body = response.body()
+                    Log.d(TAG, "onResponse: $body")
+                    if (body != null){
+                        Toast.makeText(requireContext(), "You have liked this dog", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PreferencesResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
+    }
+
+    private fun postDislikeDog(){
+        val client = ApiConfig.getApiServiceWithContext(requireActivity(), account?.idToken.toString()).postPreference(
+            PostPreferencesRequest(
+                preference = "DISLIKE",
+                petId = list[manager.topPosition].data?.get(manager.topPosition)?.id
+            )
+        )
+        client.enqueue(object : Callback<PreferencesResponse>{
+            override fun onResponse(
+                call: Call<PreferencesResponse>,
+                response: Response<PreferencesResponse>
+            ) {
+                if (response.isSuccessful){
+                    val body = response.body()
+                    Log.d(TAG, "onResponse: $body")
+                    if (body != null){
+                        Toast.makeText(requireContext(), "You have disliked this dog", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PreferencesResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
+    }
+
     companion object {
         private const val TAG = "HomeFragment"
     }
 }
-
-/**
-FirebaseDatabase.getInstance().getReference("users")
-.addValueEventListener(object : ValueEventListener {
-override fun onDataChange(snapshot: DataSnapshot) {
-Log.d("HomeFragment", "onDataChange: $snapshot")
-if(snapshot.exists()){
-list = arrayListOf()
-for(data in snapshot.children){
-val dog = data.getValue(DogModel::class.java)
-//                            user?.let { list.add(it) }
-list.add(dog!!)
-}
-list.shuffle()
-init()
-binding.cardStackView.layoutManager = manager
-binding.cardStackView.itemAnimator = DefaultItemAnimator()
-binding.cardStackView.adapter = HomeAdapter(requireContext(), list)
-} else {
-Toast.makeText(requireContext(), "No data found", Toast.LENGTH_SHORT).show()
-}
-}
-override fun onCancelled(error: DatabaseError) {
-Toast.makeText(requireContext(), error.message, Toast.LENGTH_LONG).show()
-}
-})
- */

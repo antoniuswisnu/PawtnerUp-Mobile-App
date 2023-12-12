@@ -8,10 +8,10 @@ import com.bumptech.glide.Glide
 import com.example.pawtnerup.R
 import com.smarteist.autoimageslider.SliderViewAdapter
 
-class SliderAdapter(image: List<Int>) :
+class SliderAdapter(image: List<Any>) :
     SliderViewAdapter<SliderAdapter.SliderViewHolder>() {
 
-    var sliderList: List<Int> = image
+    var sliderList: List<Any> = image
 
     override fun getCount(): Int {
         return sliderList.size

@@ -87,7 +87,6 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 TODO()
             }
-
         }
 
         getDogBreeds()

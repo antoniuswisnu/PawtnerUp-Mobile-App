@@ -128,4 +128,7 @@ dependencies {
     // chucker
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
+
+    // picaso
+    implementation("com.squareup.picasso:picasso:2.71828")
 }
