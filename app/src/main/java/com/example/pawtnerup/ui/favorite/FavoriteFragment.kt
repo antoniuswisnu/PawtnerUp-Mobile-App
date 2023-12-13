@@ -1,5 +1,6 @@
 package com.example.pawtnerup.ui.favorite
 
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -55,16 +56,19 @@ class FavoriteFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     val body = response.body()?.dataAdopter
+                    val hasLikePreference = body?.preferences?.filter { it?.preference == "LIKE" }
+                    val hasDislikePreference = body?.preferences?.filter { it?.preference == "DISLIKE" }
 
-//                    val likeDog = body?.preference?.map {
-//                        "LIKE"
-//                    }
-
-                    val adapter = body?.let { FavoriteAdapter(requireActivity(),it) }
-                    recyclerView = binding.rvFavorite
-                    recyclerView.layoutManager = LinearLayoutManager(requireActivity())
-                    recyclerView.adapter = adapter
-
+                    if (!hasLikePreference.isNullOrEmpty()) {
+                        val adapter = FavoriteAdapter(requireActivity(), hasLikePreference)
+                        recyclerView = binding.rvFavorite
+                        recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+                        recyclerView.adapter = adapter
+                    } else {
+                        Log.e(TAG, "No data likes")
+                    }
+                    Log.d(TAG, "hasLikePreference: ${hasLikePreference?.size}")
+                    Log.d(TAG, "hasDislikePreference: $hasDislikePreference")
                     Log.d(TAG, "Response Body: $body ${response.isSuccessful}")
                 }
             }

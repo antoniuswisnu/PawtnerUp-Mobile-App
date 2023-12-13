@@ -16,6 +16,9 @@
         android:theme="@style/Theme.PawtnerUp"
         tools:targetApi="31">
         <activity
+            android:name=".ui.detail.DetailRecommendationActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.splash.LoadingActivity"
             android:exported="false" />
         <activity

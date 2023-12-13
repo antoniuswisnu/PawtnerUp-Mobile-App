@@ -35,8 +35,6 @@ class HomeFragment : Fragment() {
     private lateinit var list : ArrayList<RecommendationResponse>
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private var account: GoogleSignInAccount? = null
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -139,7 +137,8 @@ class HomeFragment : Fragment() {
         val client = ApiConfig.getApiServiceWithContext(requireActivity(), account?.idToken.toString()).postPreference(
             PostPreferencesRequest(
                 preference = "LIKE",
-                petId = list[manager.topPosition].data?.get(manager.topPosition)?.id
+//                petId = list[manager.topPosition].data?.get(manager.topPosition)?.id
+                petId = list[0].data?.get(0)?.id
             )
         )
         client.enqueue(object : Callback<PreferencesResponse>{
@@ -168,7 +167,7 @@ class HomeFragment : Fragment() {
         val client = ApiConfig.getApiServiceWithContext(requireActivity(), account?.idToken.toString()).postPreference(
             PostPreferencesRequest(
                 preference = "DISLIKE",
-                petId = list[manager.topPosition].data?.get(manager.topPosition)?.id
+                petId = list[0].data?.get(0)?.id
             )
         )
         client.enqueue(object : Callback<PreferencesResponse>{
