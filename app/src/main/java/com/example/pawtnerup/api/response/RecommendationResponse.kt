@@ -28,6 +28,9 @@ data class RecommendationItem(
 	@field:SerializedName("media")
 	val media: List<String?>? = null,
 
+	@field:SerializedName("labels")
+	val labels: List<String?>? = null,
+
 	@field:SerializedName("estimate_age")
 	val estimateAge: Float? = null,
 

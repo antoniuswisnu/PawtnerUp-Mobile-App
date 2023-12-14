@@ -6,17 +6,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pawtnerup.R
+import com.example.pawtnerup.api.response.RecommendationResponse
+import com.example.pawtnerup.api.retrofit.ApiConfig
 import com.example.pawtnerup.databinding.ActivityLoginBinding
 import com.example.pawtnerup.ui.detail.SliderAdapter
 import com.example.pawtnerup.ui.main.MainActivity
 import com.example.pawtnerup.ui.onboarding.OnboardingActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.smarteist.autoimageslider.SliderView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
@@ -33,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.pawtnerup_mobile_client_id_new))
             .requestEmail()
+            .requestServerAuthCode(getString(R.string.pawtnerup_mobile_client_id_new), true)
             .build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -60,10 +68,15 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val account = task.getResult(ApiException::class.java)
                 val email = account.email
+
                 val idToken = account.idToken
+                val serverAuth = account.serverAuthCode
+
                 val displayName = account.displayName
                 val photoUrl = account.photoUrl
-                Log.d(TAG, "firebaseAuthWithGoogle:" + idToken!!)
+
+                Log.d(TAG, "idToken: " + idToken!!)
+                Log.d(TAG, "serverAuth: $serverAuth")
 
                 Log.d(TAG, "Sign-in success: " +
                         "idToken : $idToken, " +
@@ -73,14 +86,36 @@ class LoginActivity : AppCompatActivity() {
                         "id :" + account.id + ", " +
                         "isExpired : " + account.isExpired
                 )
-                val intent = Intent(this, OnboardingActivity::class.java)
-                startActivity(intent)
+
+                val client = ApiConfig.getApiService(this, idToken, serverAuth.toString()).getRecommendations()
+                client.enqueue(object : Callback<RecommendationResponse> {
+                    override fun onResponse(
+                        call: Call<RecommendationResponse>,
+                        response: Response<RecommendationResponse>
+                    ) {
+                        if (response.isSuccessful){
+                            val refreshToken = response.headers()["X-Refresh-token"]
+                            Log.d(TAG, "refreshToken: $refreshToken")
+                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            startActivity(intent)
+                        }
+                        else {
+                            val intent = Intent(this@LoginActivity, OnboardingActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<RecommendationResponse>, t: Throwable) {
+                        Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_SHORT).show()
+                        Log.e(TAG, "onFailure: ${t.message}")
+                    }
+
+                })
             } catch (e: ApiException){
                 Log.w(TAG, "signInResult:failed code= $e")
             }
         }
     }
-
     private fun playSlider(){
         sliderView = binding.imgBgLogin
 
@@ -113,7 +148,6 @@ class LoginActivity : AppCompatActivity() {
             startDelay = 300
         }.start()
     }
-
 
     companion object {
         private const val RC_SIGN_IN = 1

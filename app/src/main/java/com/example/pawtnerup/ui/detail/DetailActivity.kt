@@ -4,7 +4,6 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.example.pawtnerup.R
 import com.example.pawtnerup.data.model.DogModel
 import com.example.pawtnerup.databinding.ActivityDetailBinding
 import com.smarteist.autoimageslider.SliderView

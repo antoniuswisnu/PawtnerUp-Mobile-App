@@ -2,7 +2,6 @@ package com.example.pawtnerup.ui.questionnaire
 
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pawtnerup.R
@@ -14,7 +13,6 @@ class BreedAdapter(private val items: MutableList<BreedModel>,
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemName: TextView = itemView.findViewById(R.id.tvBreedName)
-        val deleteButton: ImageView = itemView.findViewById(R.id.deleteBreed)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

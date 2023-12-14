@@ -43,13 +43,22 @@
         android:background="@drawable/custom_spinner"
         />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:translationZ="50dp"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        tools:visibility="visible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvBreed"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="32dp"
         tools:listitem="@layout/item_breed"
         />
 
@@ -65,21 +74,6 @@
         android:layout_marginEnd="32dp"
         android:textAllCaps="false"
         android:background="@drawable/custom_button"
-        android:text="Submit" />
-
-    <Button
-        android:id="@+id/btnTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:textColor="@color/white"
-        android:fontFamily="@font/poppins_bold"
-        android:textSize="16sp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textAllCaps="false"
-        android:background="@drawable/custom_button"
-        android:text="Test" />
-
+        android:text="@string/submit" />
 
 </LinearLayout>

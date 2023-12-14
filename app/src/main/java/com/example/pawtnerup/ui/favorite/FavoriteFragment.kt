@@ -1,25 +1,21 @@
 package com.example.pawtnerup.ui.favorite
 
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pawtnerup.R
-import com.example.pawtnerup.api.response.AdopterResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.repository.PetRepository
 import com.example.pawtnerup.databinding.FragmentFavoriteBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FavoriteFragment : Fragment() {
 
@@ -27,6 +23,8 @@ class FavoriteFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private var account: GoogleSignInAccount? = null
+
+    private lateinit var viewModel: FavoriteViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,43 +39,39 @@ class FavoriteFragment : Fragment() {
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         account = GoogleSignIn.getLastSignedInAccount(requireActivity())
 
-        getData()
+        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), account?.serverAuthCode.toString())
+        val repository = PetRepository(apiService)
+        val factory = FavoriteViewModelFactory(repository)
+
+        viewModel = ViewModelProvider(this, factory)[FavoriteViewModel::class.java]
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            showLoading(isLoading)
+        }
+        observeViewModel()
+        viewModel.fetchData()
         return binding.root
     }
 
-    private fun getData() {
-        val client =
-            ApiConfig.getApiServiceWithContext(requireActivity(), account?.idToken.toString())
-                .getAdopter()
-        client.enqueue(object : Callback<AdopterResponse> {
-            override fun onResponse(
-                call: Call<AdopterResponse>,
-                response: Response<AdopterResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val body = response.body()?.dataAdopter
-                    val hasLikePreference = body?.preferences?.filter { it?.preference == "LIKE" }
-                    val hasDislikePreference = body?.preferences?.filter { it?.preference == "DISLIKE" }
+    private fun observeViewModel() {
+        viewModel.adopterData.observe(viewLifecycleOwner) { adopterData ->
+            val adapter = adopterData?.let { FavoriteAdapter(requireActivity(), it) }
+            recyclerView = binding.rvFavorite
+            recyclerView.layoutManager = LinearLayoutManager(requireActivity())
+            recyclerView.adapter = adapter
+        }
 
-                    if (!hasLikePreference.isNullOrEmpty()) {
-                        val adapter = FavoriteAdapter(requireActivity(), hasLikePreference)
-                        recyclerView = binding.rvFavorite
-                        recyclerView.layoutManager = LinearLayoutManager(requireActivity())
-                        recyclerView.adapter = adapter
-                    } else {
-                        Log.e(TAG, "No data likes")
-                    }
-                    Log.d(TAG, "hasLikePreference: ${hasLikePreference?.size}")
-                    Log.d(TAG, "hasDislikePreference: $hasDislikePreference")
-                    Log.d(TAG, "Response Body: $body ${response.isSuccessful}")
-                }
-            }
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            Log.e(TAG, error)
+        }
+    }
 
-            override fun onFailure(call: Call<AdopterResponse>, t: Throwable) {
-                t.printStackTrace()
-                Log.d(TAG, "onFailure: ${t.message}")
-            }
-        })
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
     }
 
     companion object {

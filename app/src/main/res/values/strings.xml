@@ -38,4 +38,13 @@
     <string name="questionnaire">Questionnaire</string>
     <string name="find_your_n_pawtner">Find Your \n Pawtner</string>
     <string name="sign_in">Sign In</string>
+    <string name="setting">Setting</string>
+    <string name="email">Email</string>
+    <string name="notifications">Notifications</string>
+    <string name="language">Language</string>
+    <string name="privacy">Privacy</string>
+    <string name="help_center">Help Center</string>
+    <string name="about_us">About Us</string>
+    <string name="log_out">Log Out</string>
+    <string name="submit">Submit</string>
 </resources>

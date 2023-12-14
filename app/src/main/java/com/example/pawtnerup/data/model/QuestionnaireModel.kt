@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class QuestionnaireModel2 (
+data class QuestionnaireModel (
     val petSizes: ArrayList<String>?,
     val petAges: ArrayList<String>?,
     val petGenders: ArrayList<String>?,

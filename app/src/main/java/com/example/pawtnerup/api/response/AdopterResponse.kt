@@ -62,6 +62,9 @@ data class PetAdopter(
 	@field:SerializedName("media")
 	val media: List<String?>? = null,
 
+	@field:SerializedName("labels")
+	val labels: List<String?>? = null,
+
 	@field:SerializedName("shelter_id")
 	val shelterId: Int? = null,
 

@@ -2,12 +2,10 @@ package com.example.pawtnerup.ui.questionnaire
 
 import android.animation.ObjectAnimator
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import com.example.pawtnerup.data.model.QuestionnaireModel2
+import com.example.pawtnerup.data.model.QuestionnaireModel
 import com.example.pawtnerup.databinding.ActivityQuestionnaireBinding
 
 class QuestionnaireActivity : AppCompatActivity() {
@@ -85,25 +83,29 @@ class QuestionnaireActivity : AppCompatActivity() {
         if (currentQuestionIndex < questions.size) {
             binding.questionTextView.text = questions[currentQuestionIndex]
 
-            if (currentQuestionIndex == 1){
-                binding.rb1.text = answerChoice2[0]
-                binding.rb2.text = answerChoice2[1]
-                binding.rb3.text = answerChoice2[2]
-                binding.rb4.text = answerChoice2[3]
-            } else if (currentQuestionIndex == 2){
-                binding.rb1.text = answerChoice3[0]
-                binding.rb2.text = answerChoice3[1]
-                binding.rb3.visibility = android.view.View.INVISIBLE
-                binding.rb4.visibility = android.view.View.INVISIBLE
-            } else {
-                binding.rb1.text = answerChoice1[0]
-                binding.rb2.text = answerChoice1[1]
-                binding.rb3.text = answerChoice1[2]
-                binding.rb4.text = answerChoice1[3]
+            when (currentQuestionIndex) {
+                1 -> {
+                    binding.rb1.text = answerChoice2[0]
+                    binding.rb2.text = answerChoice2[1]
+                    binding.rb3.text = answerChoice2[2]
+                    binding.rb4.text = answerChoice2[3]
+                }
+                2 -> {
+                    binding.rb1.text = answerChoice3[0]
+                    binding.rb2.text = answerChoice3[1]
+                    binding.rb3.visibility = android.view.View.INVISIBLE
+                    binding.rb4.visibility = android.view.View.INVISIBLE
+                }
+                else -> {
+                    binding.rb1.text = answerChoice1[0]
+                    binding.rb2.text = answerChoice1[1]
+                    binding.rb3.text = answerChoice1[2]
+                    binding.rb4.text = answerChoice1[3]
+                }
             }
 
         } else {
-            val questionnaireModel2 = QuestionnaireModel2(
+            val questionnaireModel2 = QuestionnaireModel(
                 listAnswer1,
                 listAnswer2,
                 listAnswer3,
@@ -173,7 +175,7 @@ class QuestionnaireActivity : AppCompatActivity() {
         displayQuestion()
     }
 
-    fun playAnimation(){
+    private fun playAnimation(){
         val tvTitle = ObjectAnimator.ofFloat(binding.tvTitle, android.view.View.ALPHA, 1f).setDuration(400)
         val tvQuestion = ObjectAnimator.ofFloat(binding.questionTextView, android.view.View.ALPHA, 1f).setDuration(400)
         val rbGroup = ObjectAnimator.ofFloat(binding.radioGroup, android.view.View.ALPHA, 1f).setDuration(400)

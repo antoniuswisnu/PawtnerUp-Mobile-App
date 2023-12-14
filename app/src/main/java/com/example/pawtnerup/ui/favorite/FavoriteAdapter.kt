@@ -32,7 +32,6 @@ class FavoriteAdapter(val context: Context, private val listDog: List<Preference
         val nameDog = dog?.name
         val breedDog = dog?.breed
         val photoDog = "https://storage.googleapis.com/pawtnerup-assets/${dog?.media?.get(0).toString()}"
-//        val photoDog = dog?.media?.get(0).toString()
 
         holder.binding.tvDogName.text = nameDog
         holder.binding.tvDogType.text = breedDog
@@ -40,12 +39,6 @@ class FavoriteAdapter(val context: Context, private val listDog: List<Preference
             .load(photoDog)
             .override(100, 100)
             .into(holder.binding.ivDog)
-
-//        Picasso.get()
-//            .load(photoDog)
-//            .resize(100, 100)
-//            .into(holder.binding.ivDog)
-
 
         holder.itemView.setOnClickListener {
             val dogModel = DogModel(
@@ -80,6 +73,6 @@ class FavoriteAdapter(val context: Context, private val listDog: List<Preference
     class ViewHolder (val binding: ItemDogBinding): RecyclerView.ViewHolder(binding.root)
 
     companion object {
-        private val TAG = "FavoriteAdapter"
+        private const val TAG = "FavoriteAdapter"
     }
 }

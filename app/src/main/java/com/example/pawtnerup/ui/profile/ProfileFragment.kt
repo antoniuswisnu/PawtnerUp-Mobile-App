@@ -7,11 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
-import com.example.pawtnerup.R
 import com.example.pawtnerup.databinding.FragmentProfileBinding
 import com.example.pawtnerup.ui.login.LoginActivity
 import com.example.pawtnerup.ui.report.ReportActivity
@@ -21,7 +17,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 
 class ProfileFragment : Fragment() {
-    private lateinit var profileViewModel: ProfileViewModel
     private lateinit var binding : FragmentProfileBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
 
@@ -30,7 +25,6 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        profileViewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -59,13 +53,20 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        binding.csReport.setOnClickListener{
-            startActivity(Intent(requireActivity(), ReportActivity::class.java))
-        }
-
         binding.csLanguage.setOnClickListener {
             startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
+        }
+
+        binding.csNotif.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        }
+
+        binding.csAbout.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS))
+        }
+
+        binding.csPrivacy.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_PRIVACY_SETTINGS))
         }
 
         binding.csLogout.setOnClickListener {

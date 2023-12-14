@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:fontFamily="@font/poppins_bold"
-        android:text="Setting"
+        android:text="@string/setting"
         android:textColor="@color/primary"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,10 +37,12 @@
 
         <TextView
             android:id="@+id/tvName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="118dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:maxLines="1"
             android:fontFamily="@font/poppins_bold"
             android:text="@string/name"
             android:textColor="@color/black"
@@ -50,12 +52,14 @@
 
         <TextView
             android:id="@+id/tvEmail"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="120dp"
             android:layout_marginTop="8dp"
+            android:maxLines="1"
+            android:layout_marginEnd="32dp"
             android:fontFamily="@font/poppins"
-            android:text="Email"
+            android:text="@string/email"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintStart_toEndOf="@+id/imgProfile"
@@ -92,7 +96,8 @@
             android:src="@drawable/ic_notif"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView" />
+            app:layout_constraintTop_toTopOf="@+id/textView"
+            android:contentDescription="@string/notifications" />
 
         <TextView
             android:id="@+id/textView"
@@ -100,7 +105,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/poppins"
-            android:text="Notifications"
+            android:text="@string/notifications"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toEndOf="@+id/imageView2"
@@ -122,6 +127,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="32dp"
+            android:contentDescription="@string/language"
             android:src="@drawable/ic_language"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -132,7 +138,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/poppins"
-            android:text="Language"
+            android:text="@string/language"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView3"
@@ -155,6 +161,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="32dp"
+            android:contentDescription="@string/privacy"
             android:src="@drawable/ic_privacy"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -164,7 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/poppins"
-            android:text="Privacy"
+            android:text="@string/privacy"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/imageView4"
@@ -173,37 +180,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/csReport"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/csPrivacy">
-
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="32dp"
-            android:src="@drawable/baseline_report_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:fontFamily="@font/poppins"
-            android:text="Report Found Pet"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView5"
-            app:layout_constraintStart_toEndOf="@+id/imageView5"
-            app:layout_constraintTop_toTopOf="@+id/imageView5" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout5"
@@ -212,13 +188,14 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/csReport">
+        app:layout_constraintTop_toBottomOf="@+id/csPrivacy">
 
         <ImageView
             android:id="@+id/imageView8"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="32dp"
+            android:contentDescription="@string/help_center"
             android:src="@drawable/ic_help"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -228,7 +205,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/poppins"
-            android:text="Help Center"
+            android:text="@string/help_center"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -252,6 +229,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="32dp"
             android:src="@drawable/ic_about"
+            android:contentDescription="@string/about_us"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -260,7 +238,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/poppins"
-            android:text="About Us"
+            android:text="@string/about_us"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -284,6 +262,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="32dp"
             android:src="@drawable/ic_logout"
+            android:contentDescription="@string/log_out"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -292,7 +271,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:fontFamily="@font/poppins"
-            android:text="Log Out"
+            android:text="@string/log_out"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

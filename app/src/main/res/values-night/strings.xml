@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="AppName">PawtnerUp</string>
+    <string name="setting">Setting</string>
+    <string name="notifications">Notifications</string>
+    <string name="language">Language</string>
+    <string name="privacy">Privacy</string>
+    <string name="help_center">Help Center</string>
+    <string name="about_us">About Us</string>
+    <string name="log_out">Log Out</string>
 </resources>

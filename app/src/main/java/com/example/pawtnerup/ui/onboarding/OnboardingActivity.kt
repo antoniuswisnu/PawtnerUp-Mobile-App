@@ -1,10 +1,7 @@
 package com.example.pawtnerup.ui.onboarding
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -102,6 +99,4 @@ class OnboardingActivity : AppCompatActivity() {
             binding.buttonOnBoardingAction.visibility = View.GONE
         }
     }
-
-
 }

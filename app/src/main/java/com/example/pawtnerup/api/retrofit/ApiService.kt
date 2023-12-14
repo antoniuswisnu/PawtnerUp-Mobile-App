@@ -4,20 +4,13 @@ import com.example.pawtnerup.api.request.PostPreferencesRequest
 import com.example.pawtnerup.api.request.PostQuestionnaireRequest
 import com.example.pawtnerup.api.response.AdopterResponse
 import com.example.pawtnerup.api.response.BreedResponse
-import com.example.pawtnerup.api.response.PetAdopter
-import com.example.pawtnerup.api.response.PetResponse
-import com.example.pawtnerup.api.response.PreferencesItem
 import com.example.pawtnerup.api.response.PreferencesResponse
 import com.example.pawtnerup.api.response.QuestionnaireResponse
-import com.example.pawtnerup.api.response.RecommendationItem
 import com.example.pawtnerup.api.response.RecommendationResponse
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {

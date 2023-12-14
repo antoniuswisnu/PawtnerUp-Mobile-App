@@ -17,7 +17,7 @@ import com.example.pawtnerup.api.response.BreedResponse
 import com.example.pawtnerup.api.response.QuestionnaireResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
 import com.example.pawtnerup.data.model.BreedModel
-import com.example.pawtnerup.data.model.QuestionnaireModel2
+import com.example.pawtnerup.data.model.QuestionnaireModel
 import com.example.pawtnerup.databinding.ActivityBreedQuestionnaireBinding
 import com.example.pawtnerup.ui.splash.LoadingActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -95,25 +95,21 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         binding.btnNext.setOnClickListener {
             postQuestionnaire()
         }
-
-        binding.btnTest.setOnClickListener {
-            testData()
-        }
     }
 
     private fun getDogBreeds(){
         val questionnaireModel2 = if(Build.VERSION.SDK_INT >= 33){
-            intent.getParcelableExtra("questionnaireData2", QuestionnaireModel2::class.java)
+            intent.getParcelableExtra("questionnaireData2", QuestionnaireModel::class.java)
         } else {
             @Suppress
-            intent.getParcelableExtra<QuestionnaireModel2>("questionnaireData2")
+            intent.getParcelableExtra("questionnaireData2")
         }
 
         petSizes = questionnaireModel2?.petSizes!!
         val petSizeConvert = petSizes.toString().replace("[", "").replace("]", "").replace(" ","").uppercase()
         Log.d(TAG, "getDogBreeds: $petSizeConvert")
 
-        val client = ApiConfig.getApiService(account?.idToken.toString()).getBreeds(petSizeConvert)
+        val client = ApiConfig.getApiService(this, account?.idToken.toString(), account?.serverAuthCode.toString()).getBreeds(petSizeConvert)
         client.enqueue(object : Callback<BreedResponse> {
             override fun onResponse(
                 call: Call<BreedResponse>,
@@ -182,39 +178,18 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         )
     }
 
-    private fun testData(){
-        val questionnaireModel2 = if(Build.VERSION.SDK_INT >= 33){
-            intent.getParcelableExtra("questionnaireData2", QuestionnaireModel2::class.java)
-        } else {
-            @Suppress
-            intent.getParcelableExtra<QuestionnaireModel2>("questionnaireData2")
-        }
-
-        petSizes = questionnaireModel2?.petSizes!!
-        petAges = questionnaireModel2.petAges!!
-        petGenders = questionnaireModel2.petGenders!!
-
-        allData.addAll(petSizes)
-        allData.addAll(petAges)
-        allData.addAll(petGenders)
-        allData.add(allPetBreeds)
-
-        Log.d(TAG, "testData: $allData")
-        Toast.makeText(this, "$allData", Toast.LENGTH_SHORT).show()
-    }
-
     private fun postQuestionnaire(){
         val questionnaireModel2 = if(Build.VERSION.SDK_INT >= 33){
-            intent.getParcelableExtra("questionnaireData2", QuestionnaireModel2::class.java)
+            intent.getParcelableExtra("questionnaireData2", QuestionnaireModel::class.java)
         } else {
             @Suppress
-            intent.getParcelableExtra<QuestionnaireModel2>("questionnaireData2")
+            intent.getParcelableExtra("questionnaireData2")
         }
         petSizes = questionnaireModel2?.petSizes!!
         petAges = questionnaireModel2.petAges!!
         petGenders = questionnaireModel2.petGenders!!
 
-        val client = ApiConfig.getApiServiceWithContext(this,account?.idToken.toString()).postQuestionnaire(
+        val client = ApiConfig.getApiService(this,account?.idToken.toString(), account?.serverAuthCode.toString()).postQuestionnaire(
             PostQuestionnaireRequest(
                 petGenders = petGenders.map {
                     it.uppercase()
@@ -234,8 +209,6 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                 response: Response<QuestionnaireResponse>
             ) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-
                     Toast.makeText(this@BreedQuestionnaireActivity, "Success", Toast.LENGTH_SHORT).show()
                 }
             }

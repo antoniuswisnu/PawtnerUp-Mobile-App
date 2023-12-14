@@ -9,13 +9,21 @@
         android:id="@+id/navigation_home"
         android:name="com.example.pawtnerup.ui.home.HomeFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_detailRecommendationActivity"
+            app:destination="@id/detailRecommendationActivity" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_favorite"
         android:name="com.example.pawtnerup.ui.favorite.FavoriteFragment"
         android:label="@string/favorite"
-        tools:layout="@layout/fragment_favorite" />
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_navigation_favorite_to_detailActivity"
+            app:destination="@id/detailActivity" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
@@ -43,4 +51,44 @@
         android:id="@+id/settingActivity"
         android:name="com.example.pawtnerup.ui.setting.SettingActivity"
         android:label="SettingActivity" />
+    <activity
+        android:id="@+id/breedQuestionnaireActivity"
+        android:name="com.example.pawtnerup.ui.questionnaire.BreedQuestionnaireActivity"
+        android:label="activity_breed_questionnaire"
+        tools:layout="@layout/activity_breed_questionnaire" />
+    <activity
+        android:id="@+id/detailActivity"
+        android:name="com.example.pawtnerup.ui.detail.DetailActivity"
+        android:label="activity_detail"
+        tools:layout="@layout/activity_detail" />
+    <activity
+        android:id="@+id/splashActivity"
+        android:name="com.example.pawtnerup.ui.splash.SplashActivity"
+        android:label="activity_splash"
+        tools:layout="@layout/activity_splash" />
+    <activity
+        android:id="@+id/loadingActivity"
+        android:name="com.example.pawtnerup.ui.splash.LoadingActivity"
+        android:label="activity_loading"
+        tools:layout="@layout/activity_loading" />
+    <activity
+        android:id="@+id/onboardingActivity"
+        android:name="com.example.pawtnerup.ui.onboarding.OnboardingActivity"
+        android:label="activity_onboarding"
+        tools:layout="@layout/activity_onboarding" />
+    <activity
+        android:id="@+id/questionnaireActivity"
+        android:name="com.example.pawtnerup.ui.questionnaire.QuestionnaireActivity"
+        android:label="activity_questionnaire"
+        tools:layout="@layout/activity_questionnaire" />
+    <activity
+        android:id="@+id/detailRecommendationActivity"
+        android:name="com.example.pawtnerup.ui.detail.DetailRecommendationActivity"
+        android:label="activity_detail_recommendation"
+        tools:layout="@layout/activity_detail_recommendation" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.example.pawtnerup.ui.login.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
 </navigation>

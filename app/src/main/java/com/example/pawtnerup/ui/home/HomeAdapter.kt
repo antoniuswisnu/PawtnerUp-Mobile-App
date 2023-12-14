@@ -3,18 +3,16 @@ package com.example.pawtnerup.ui.home
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.pawtnerup.api.response.RecommendationResponse
-import com.example.pawtnerup.data.model.DogModel
 import com.example.pawtnerup.data.model.DogRecommendationModel
 import com.example.pawtnerup.databinding.ItemDogLayoutBinding
-import com.example.pawtnerup.ui.detail.DetailActivity
 import com.example.pawtnerup.ui.detail.DetailRecommendationActivity
 
 class HomeAdapter(val context: Context, private val list : ArrayList<RecommendationResponse>) : RecyclerView.Adapter<HomeAdapter.HomeViewHolder>() {
@@ -29,8 +27,11 @@ class HomeAdapter(val context: Context, private val list : ArrayList<Recommendat
         val dog = list[position].data?.get(position)
         holder.binding.tvDogName.text = dog?.name
         holder.binding.tvBreed.text = dog?.breed
-        holder.binding.tvGender.text = dog?.gender
+        holder.binding.tvGender.text = dog?.gender?.lowercase()
         holder.binding.tvDogBio.text = dog?.rescueStory
+
+        holder.binding.rvLabel.layoutManager = StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.HORIZONTAL)
+        holder.binding.rvLabel.adapter = LabelAdapter(context, list)
 
         Glide.with(context)
             .load(list[position].data?.get(position)?.media?.get(0))
@@ -40,7 +41,7 @@ class HomeAdapter(val context: Context, private val list : ArrayList<Recommendat
             val dogModel = DogRecommendationModel(
                 dog?.id,
                 dog?.name,
-                dog?.gender,
+                dog?.gender?.lowercase(),
                 dog?.breed,
                 dog?.estimateAge.toString(),
                 dog?.sterilizationStatus,
