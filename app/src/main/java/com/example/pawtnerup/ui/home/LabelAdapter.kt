@@ -1,6 +1,7 @@
 package com.example.pawtnerup.ui.home
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -17,8 +18,12 @@ class LabelAdapter(val context: Context, private val list : ArrayList<Recommenda
     }
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val dog = list[position].data?.get(position)
-        for (i in 0 until dog?.labels?.size!!) {
+        for (i in 0 until dog?.labels?.size!! - 1) {
             holder.binding.tvLabel.text = dog.labels[i]
+            dog.labels[i]?.let { Log.d("LabelAdapter", it) }
         }
+//        holder.binding.tvLabel.text = dog?.labels?.get(0)
+
+
     }
 }

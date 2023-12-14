@@ -6,12 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.data.repository.PetRepository
 import com.example.pawtnerup.databinding.FragmentFavoriteBinding
+import com.example.pawtnerup.ui.login.LoginActivity
+import com.example.pawtnerup.ui.login.LoginViewModel
+import com.example.pawtnerup.ui.login.LoginViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,6 +30,9 @@ class FavoriteFragment : Fragment() {
     private var account: GoogleSignInAccount? = null
 
     private lateinit var viewModel: FavoriteViewModel
+    private val loginViewModel by viewModels<LoginViewModel>{
+        LoginViewModelFactory.getInstance(requireActivity())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,7 +47,9 @@ class FavoriteFragment : Fragment() {
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         account = GoogleSignIn.getLastSignedInAccount(requireActivity())
 
-        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), account?.serverAuthCode.toString())
+        val refreshToken = TokenManager.refreshTokenManager
+
+        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), refreshToken?:"")
         val repository = PetRepository(apiService)
         val factory = FavoriteViewModelFactory(repository)
 

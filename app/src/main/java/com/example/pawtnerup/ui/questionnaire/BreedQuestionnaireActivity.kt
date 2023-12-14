@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.pawtnerup.api.request.PostQuestionnaireRequest
@@ -18,7 +20,11 @@ import com.example.pawtnerup.api.response.QuestionnaireResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
 import com.example.pawtnerup.data.model.BreedModel
 import com.example.pawtnerup.data.model.QuestionnaireModel
+import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.databinding.ActivityBreedQuestionnaireBinding
+import com.example.pawtnerup.ui.login.LoginActivity
+import com.example.pawtnerup.ui.login.LoginViewModel
+import com.example.pawtnerup.ui.login.LoginViewModelFactory
 import com.example.pawtnerup.ui.splash.LoadingActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -43,12 +49,14 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
     private var petGenders = ArrayList<String>()
     private var petBreeds: Int? = null
     private var allPetBreeds = ArrayList<Int>()
-    private val allData = ArrayList<Any>()
 
     var listBreed: ArrayList<BreedItem> = ArrayList()
 
     private val selectedItems = mutableListOf<BreedModel>()
     private lateinit var recyclerView: RecyclerView
+    private val loginViewModel by viewModels<LoginViewModel>{
+        LoginViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +117,8 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         val petSizeConvert = petSizes.toString().replace("[", "").replace("]", "").replace(" ","").uppercase()
         Log.d(TAG, "getDogBreeds: $petSizeConvert")
 
-        val client = ApiConfig.getApiService(this, account?.idToken.toString(), account?.serverAuthCode.toString()).getBreeds(petSizeConvert)
+        val refreshToken = TokenManager.refreshTokenManager
+        val client = ApiConfig.getApiService(this, account?.idToken.toString(), refreshToken?:"").getBreeds(petSizeConvert)
         client.enqueue(object : Callback<BreedResponse> {
             override fun onResponse(
                 call: Call<BreedResponse>,
@@ -189,7 +198,8 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         petAges = questionnaireModel2.petAges!!
         petGenders = questionnaireModel2.petGenders!!
 
-        val client = ApiConfig.getApiService(this,account?.idToken.toString(), account?.serverAuthCode.toString()).postQuestionnaire(
+        val refreshToken = TokenManager.refreshTokenManager
+        val client = ApiConfig.getApiService(this,account?.idToken.toString(), refreshToken?:"").postQuestionnaire(
             PostQuestionnaireRequest(
                 petGenders = petGenders.map {
                     it.uppercase()

@@ -50,7 +50,8 @@ class FavoriteAdapter(val context: Context, private val listDog: List<Preference
                 dog?.shelterId,
                 dog?.sterilizationStatus,
                 dog?.rescueStory,
-                dog?.media
+                dog?.media,
+                dog?.shelter?.phoneNumber
             )
 
             val intent = Intent(context, DetailActivity::class.java)

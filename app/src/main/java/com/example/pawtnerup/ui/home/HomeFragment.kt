@@ -1,16 +1,25 @@
 package com.example.pawtnerup.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.pawtnerup.R
+import com.example.pawtnerup.api.request.PostRefreshTokenRequest
 import com.example.pawtnerup.api.response.RecommendationResponse
+import com.example.pawtnerup.api.response.RefreshResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.data.repository.PetRepository
 import com.example.pawtnerup.databinding.FragmentHomeBinding
+import com.example.pawtnerup.ui.login.LoginActivity
+import com.example.pawtnerup.ui.login.LoginViewModel
+import com.example.pawtnerup.ui.login.LoginViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -18,6 +27,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class HomeFragment : Fragment() {
@@ -28,6 +40,9 @@ class HomeFragment : Fragment() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private var account: GoogleSignInAccount? = null
     private lateinit var viewModel: HomeViewModel
+    private val loginViewModel by viewModels<LoginViewModel>{
+        LoginViewModelFactory.getInstance(requireActivity())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +53,8 @@ class HomeFragment : Fragment() {
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
+            .requestIdToken(getString(R.string.pawtnerup_mobile_client_id_new))
+            .requestServerAuthCode(getString(R.string.pawtnerup_mobile_client_id_new), true)
             .build()
 
         list = arrayListOf()
@@ -45,9 +62,17 @@ class HomeFragment : Fragment() {
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         account = GoogleSignIn.getLastSignedInAccount(requireActivity())
 
-        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), account?.serverAuthCode.toString())
+        postRefreshToken(account)
+
+        val refreshToken = TokenManager.refreshTokenManager
+
+        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), refreshToken?:"")
         val repository = PetRepository(apiService)
         val factory = HomeViewModelFactory(repository)
+
+        Log.d(TAG, "Refresh Token: ${LoginActivity().refreshToken}")
+        Log.d(TAG, "Token: ${loginViewModel.getToken()}")
+        Log.d(TAG, "refreshToken Model : $refreshToken")
 
         viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
 
@@ -59,6 +84,30 @@ class HomeFragment : Fragment() {
         init()
 
         return binding.root
+    }
+
+    fun postRefreshToken(account: GoogleSignInAccount?){
+        val client = ApiConfig.getApiServiceGetToken(requireActivity(),  account?.idToken.toString()).postRefreshToken(
+            PostRefreshTokenRequest(account?.serverAuthCode.toString())
+        )
+        client.enqueue(object : Callback<RefreshResponse> {
+            override fun onResponse(
+                call: Call<RefreshResponse>,
+                response: Response<RefreshResponse>
+            ) {
+                if (response.isSuccessful){
+                    val tempRefreshToken = response.body()?.data?.refreshToken
+                    TokenManager.refreshTokenManager = tempRefreshToken.toString()
+                    Log.d(TAG, "refreshToken: ${TokenManager.refreshTokenManager}")
+                }
+            }
+
+            override fun onFailure(call: Call<RefreshResponse>, t: Throwable) {
+                Toast.makeText(requireActivity(), t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
     }
 
     private fun observeViewModel() {

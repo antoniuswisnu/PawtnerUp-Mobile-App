@@ -5,6 +5,7 @@ import com.example.pawtnerup.api.response.AdopterResponse
 import com.example.pawtnerup.api.response.PreferencesResponse
 import com.example.pawtnerup.api.response.RecommendationResponse
 import com.example.pawtnerup.api.retrofit.ApiService
+import com.example.pawtnerup.data.model.TokenModel
 import retrofit2.Callback
 
 class PetRepository(private val apiService: ApiService){
@@ -22,5 +23,7 @@ class PetRepository(private val apiService: ApiService){
         val client = apiService.postPreference(request)
         client.enqueue(callback)
     }
+
+
 
 }

@@ -27,7 +27,7 @@ class FavoriteViewModel(private val repository: PetRepository) : ViewModel() {
                 _isLoading.value = true
                 if (response.isSuccessful) {
                     _isLoading.value = false
-                    val body = response.body()?.dataAdopter
+                    val body = response.body()?.data
                     val hasLikePreference = body?.preferences?.filter { it?.preference == "LIKE" }
 
                     if (!hasLikePreference.isNullOrEmpty()) {

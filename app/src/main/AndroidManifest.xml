@@ -25,12 +25,6 @@
             android:name=".ui.questionnaire.BreedQuestionnaireActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.questionnaire.QuestionnaireTextActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.setting.SettingActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.main.MainActivity"
             android:exported="false" />
         <activity

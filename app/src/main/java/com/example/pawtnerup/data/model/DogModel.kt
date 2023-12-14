@@ -13,7 +13,8 @@ data class DogModel (
     val shelterId: Int? = null,
     val sterilizationStatus: String? = null,
     val rescueStory: String? = null,
-    val media: List<String?>? = null
+    val media: List<String?>? = null,
+    val phoneNumber: String? = null
 ): Parcelable
 
 @Parcelize

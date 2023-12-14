@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.pawtnerup.api.response.RecommendationResponse
@@ -30,7 +32,9 @@ class HomeAdapter(val context: Context, private val list : ArrayList<Recommendat
         holder.binding.tvGender.text = dog?.gender?.lowercase()
         holder.binding.tvDogBio.text = dog?.rescueStory
 
-        holder.binding.rvLabel.layoutManager = StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.HORIZONTAL)
+//        holder.binding.rvLabel.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        holder.binding.rvLabel.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        holder.binding.rvLabel.setHasFixedSize(true)
         holder.binding.rvLabel.adapter = LabelAdapter(context, list)
 
         Glide.with(context)

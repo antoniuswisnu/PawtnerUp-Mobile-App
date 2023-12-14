@@ -2,15 +2,20 @@ package com.example.pawtnerup.ui.login
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pawtnerup.R
+import com.example.pawtnerup.api.request.PostRefreshTokenRequest
 import com.example.pawtnerup.api.response.RecommendationResponse
+import com.example.pawtnerup.api.response.RefreshResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.databinding.ActivityLoginBinding
 import com.example.pawtnerup.ui.detail.SliderAdapter
 import com.example.pawtnerup.ui.main.MainActivity
@@ -31,6 +36,10 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var sliderView: SliderView
     private lateinit var sliderAdapter: SliderAdapter
+    var refreshToken: String
+    private val loginViewModel by viewModels<LoginViewModel>{
+        LoginViewModelFactory.getInstance(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +70,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    init {
+        refreshToken = ""
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -87,15 +100,17 @@ class LoginActivity : AppCompatActivity() {
                         "isExpired : " + account.isExpired
                 )
 
-                val client = ApiConfig.getApiService(this, idToken, serverAuth.toString()).getRecommendations()
+                postRefreshToken(account)
+
+                val client = ApiConfig.getApiService(this, idToken, loginViewModel.getToken()).getRecommendations()
                 client.enqueue(object : Callback<RecommendationResponse> {
                     override fun onResponse(
                         call: Call<RecommendationResponse>,
                         response: Response<RecommendationResponse>
                     ) {
                         if (response.isSuccessful){
-                            val refreshToken = response.headers()["X-Refresh-token"]
-                            Log.d(TAG, "refreshToken: $refreshToken")
+//                            val refreshToken = response.headers()["X-Refresh-token"]
+//                            Log.d(TAG, "refreshToken: $refreshToken")
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
                             startActivity(intent)
                         }
@@ -109,13 +124,45 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_SHORT).show()
                         Log.e(TAG, "onFailure: ${t.message}")
                     }
-
                 })
             } catch (e: ApiException){
                 Log.w(TAG, "signInResult:failed code= $e")
             }
+            Log.d(TAG, "loginViewModelToken : ${loginViewModel.getToken()}")
         }
     }
+
+    fun postRefreshToken( account: GoogleSignInAccount?){
+        val client = ApiConfig.getApiServiceGetToken(this,  account?.idToken.toString()).postRefreshToken(
+            PostRefreshTokenRequest(account?.serverAuthCode.toString())
+        )
+        client.enqueue(object : Callback<RefreshResponse> {
+            override fun onResponse(
+                call: Call<RefreshResponse>,
+                response: Response<RefreshResponse>
+            ) {
+                if (response.isSuccessful){
+                    val tempRefreshToken = response.body()?.data?.refreshToken
+                        refreshToken = tempRefreshToken.toString()
+                    TokenManager.refreshTokenManager = tempRefreshToken.toString()
+                    Log.d(TAG, "refreshToken: ${TokenManager.refreshTokenManager}")
+                }
+            }
+
+            override fun onFailure(call: Call<RefreshResponse>, t: Throwable) {
+                Toast.makeText(this@LoginActivity, t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
+    }
+
+    companion object{
+        private const val RC_SIGN_IN = 1
+        private const val TAG = "LoginActivity"
+    }
+
+
     private fun playSlider(){
         sliderView = binding.imgBgLogin
 
@@ -149,8 +196,5 @@ class LoginActivity : AppCompatActivity() {
         }.start()
     }
 
-    companion object {
-        private const val RC_SIGN_IN = 1
-        private const val TAG = "LoginActivity"
-    }
+
 }
