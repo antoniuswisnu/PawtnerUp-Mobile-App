@@ -18,6 +18,7 @@ import com.example.pawtnerup.api.response.BreedItem
 import com.example.pawtnerup.api.response.BreedResponse
 import com.example.pawtnerup.api.response.QuestionnaireResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.PrefManager
 import com.example.pawtnerup.data.model.BreedModel
 import com.example.pawtnerup.data.model.QuestionnaireModel
 import com.example.pawtnerup.data.model.TokenManager
@@ -57,11 +58,15 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
     private val loginViewModel by viewModels<LoginViewModel>{
         LoginViewModelFactory.getInstance(this)
     }
+    private lateinit var prefManager: PrefManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBreedQuestionnaireBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        prefManager = PrefManager.getInstance(this)
+
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -118,7 +123,7 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         Log.d(TAG, "getDogBreeds: $petSizeConvert")
 
         val refreshToken = TokenManager.refreshTokenManager
-        val client = ApiConfig.getApiService(this, account?.idToken.toString(), refreshToken?:"").getBreeds(petSizeConvert)
+        val client = ApiConfig.getApiService(this, account?.idToken.toString(),  prefManager.getToken().toString()).getBreeds(petSizeConvert)
         client.enqueue(object : Callback<BreedResponse> {
             override fun onResponse(
                 call: Call<BreedResponse>,
@@ -199,7 +204,7 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         petGenders = questionnaireModel2.petGenders!!
 
         val refreshToken = TokenManager.refreshTokenManager
-        val client = ApiConfig.getApiService(this,account?.idToken.toString(), refreshToken?:"").postQuestionnaire(
+        val client = ApiConfig.getApiService(this,account?.idToken.toString(),  prefManager.getToken().toString()).postQuestionnaire(
             PostQuestionnaireRequest(
                 petGenders = petGenders.map {
                     it.uppercase()

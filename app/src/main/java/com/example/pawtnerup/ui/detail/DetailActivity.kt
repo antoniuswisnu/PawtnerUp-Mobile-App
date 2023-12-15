@@ -76,7 +76,9 @@ class DetailActivity : AppCompatActivity() {
         Log.d(TAG, "phoneNumber: $phoneNumber")
 
         binding.btnWa.setOnClickListener {
-            contactShelter(phoneNumber.toString())
+            if (nameDog != null) {
+                contactShelter(nameDog, phoneNumber.toString())
+            }
         }
 
         binding.btnDelete.setOnClickListener {
@@ -102,8 +104,8 @@ class DetailActivity : AppCompatActivity() {
         Log.d(TAG, "photoDog : $photoDog")
     }
 
-    private fun contactShelter(phoneNumber: String){
-        val message = "Hi, I'm interested in adopting this dog. Can you please provide me with more information?"
+    private fun contactShelter(dogName: String, phoneNumber: String){
+        val message = "Hi, I'm interested in adopting $dogName. Can you please provide me with more information?"
 
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse("http://api.whatsapp.com/send?phone=$phoneNumber&text=$message")
@@ -121,7 +123,8 @@ class DetailActivity : AppCompatActivity() {
                 if (response.isSuccessful){
                     val responseBody = response.body()
                     val phoneNumber = responseBody?.data?.phoneNumber
-                    val message = "Hi, I'm interested in adopting this dog. Can you please provide me with more information?"
+                    val dogName = responseBody?.data?.name
+                    val message = "Hi, I'm interested in adopting $dogName. Can you please provide me with more information?"
 //                    phoneNumber?.replace("tel:","")?.replace("-","")
 
                     Log.d(TAG, "phoneNumber: $phoneNumber")

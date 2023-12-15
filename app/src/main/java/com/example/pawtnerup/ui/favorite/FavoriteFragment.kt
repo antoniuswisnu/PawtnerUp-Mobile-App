@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.PrefManager
 import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.data.repository.PetRepository
 import com.example.pawtnerup.databinding.FragmentFavoriteBinding
@@ -33,6 +34,7 @@ class FavoriteFragment : Fragment() {
     private val loginViewModel by viewModels<LoginViewModel>{
         LoginViewModelFactory.getInstance(requireActivity())
     }
+    private lateinit var prefManager: PrefManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,9 +49,12 @@ class FavoriteFragment : Fragment() {
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
         account = GoogleSignIn.getLastSignedInAccount(requireActivity())
 
+        prefManager = PrefManager.getInstance(requireActivity())
+
+
         val refreshToken = TokenManager.refreshTokenManager
 
-        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), refreshToken?:"")
+        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(),  prefManager.getToken().toString())
         val repository = PetRepository(apiService)
         val factory = FavoriteViewModelFactory(repository)
 

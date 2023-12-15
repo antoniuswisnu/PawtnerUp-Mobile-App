@@ -30,5 +30,5 @@ class LoginViewModelFactory(private val repository: TokenRepository) : ViewModel
             return INSTANCE as LoginViewModelFactory
         }
     }
-
 }
+

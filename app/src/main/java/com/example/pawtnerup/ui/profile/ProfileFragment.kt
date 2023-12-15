@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.pawtnerup.data.PrefManager
 import com.example.pawtnerup.databinding.FragmentProfileBinding
 import com.example.pawtnerup.ui.login.LoginActivity
 import com.example.pawtnerup.ui.report.ReportActivity
@@ -19,6 +20,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 class ProfileFragment : Fragment() {
     private lateinit var binding : FragmentProfileBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private lateinit var prefManager: PrefManager
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +37,8 @@ class ProfileFragment : Fragment() {
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
 
         val account = GoogleSignIn.getLastSignedInAccount(requireActivity())
+        prefManager = PrefManager.getInstance(requireActivity())
+
 
         if(account != null){
             val name = account.displayName
@@ -71,6 +76,7 @@ class ProfileFragment : Fragment() {
 
         binding.csLogout.setOnClickListener {
             mGoogleSignInClient.signOut().addOnCompleteListener {
+                prefManager.clear()
                 startActivity(Intent(requireActivity(), LoginActivity::class.java))
                 requireActivity().finish()
             }

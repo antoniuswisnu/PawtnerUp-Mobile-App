@@ -8,16 +8,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide.init
 import com.example.pawtnerup.R
+import com.example.pawtnerup.api.request.PostPreferencesRequest
 import com.example.pawtnerup.api.request.PostRefreshTokenRequest
+import com.example.pawtnerup.api.response.PreferencesResponse
 import com.example.pawtnerup.api.response.RecommendationResponse
 import com.example.pawtnerup.api.response.RefreshResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.PrefManager
 import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.data.repository.PetRepository
 import com.example.pawtnerup.databinding.FragmentHomeBinding
+import com.example.pawtnerup.ui.ViewModelFactory
 import com.example.pawtnerup.ui.login.LoginActivity
 import com.example.pawtnerup.ui.login.LoginViewModel
 import com.example.pawtnerup.ui.login.LoginViewModelFactory
@@ -31,6 +38,10 @@ import com.google.android.gms.common.api.Scope
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,12 +52,16 @@ class HomeFragment : Fragment() {
     private  lateinit var binding: FragmentHomeBinding
     private lateinit var manager: CardStackLayoutManager
     private lateinit var list : ArrayList<RecommendationResponse>
+    private lateinit var listPetId : ArrayList<Int>
     private lateinit var mGoogleSignInClient: GoogleSignInClient
 //    private var account: GoogleSignInAccount? = null
-    private lateinit var viewModel: HomeViewModel
     private val loginViewModel by viewModels<LoginViewModel>{
         LoginViewModelFactory.getInstance(requireActivity())
     }
+    private var listToken: ArrayList<String> = arrayListOf()
+//    private lateinit var loginTokenViewModel: MainViewModel
+    private lateinit var prefManager: PrefManager
+    private var account: GoogleSignInAccount? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,101 +77,25 @@ class HomeFragment : Fragment() {
             .requestIdToken(getString(R.string.pawtnerup_mobile_client_id_new))
             .requestServerAuthCode(getString(R.string.pawtnerup_mobile_client_id_new), true)
             .build()
+        prefManager = PrefManager.getInstance(requireActivity())
 
         list = arrayListOf()
 
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-        val account = GoogleSignIn.getLastSignedInAccount(requireActivity())
+        account = GoogleSignIn.getLastSignedInAccount(requireActivity())
 
-        val refreshToken = TokenManager.refreshTokenManager
-
-        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), refreshToken?:"")
-        val repository = PetRepository(apiService)
-        val factory = HomeViewModelFactory(repository)
-
-        Log.d(TAG, "Refresh Token LoginActivity: ${LoginActivity().refreshToken}")
-        Log.d(TAG, "Token Preferences: ${loginViewModel.getToken()}")
-        Log.d(TAG, "refreshToken Model : $refreshToken")
-
-        viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
-
-        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            showLoading(isLoading)
-        }
-        observeViewModel()
-        viewModel.getDog() 
+        Log.d(TAG,"list dog on create : $list")
+        getDog()
         init()
 
-//        val signInIntent = mGoogleSignInClient.signInIntent
-//        startActivityForResult(signInIntent, 1)
-
-//        mGoogleSignInClient.silentSignIn().addOnCompleteListener(requireActivity()) { task ->
-//            if (task.isSuccessful) {
-//                val account = task.result
-//                val serverAuth = account?.serverAuthCode
-//                postRefreshToken(account)
-//                Log.d(TAG, "serverAuth di home fragment: $serverAuth")
-//            } else {
-//                val signInIntent = mGoogleSignInClient.signInIntent
-//                startActivityForResult(signInIntent, 1)
-//            }
-//            Log.d(TAG, "silentSignIn: ${task.isSuccessful}")
-//        }
         return binding.root
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 1){
-            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-            try {
-                val account = task.getResult(ApiException::class.java)
-                val serverAuth = account.serverAuthCode
-                postRefreshToken(account)
-                Log.d(TAG, "serverAuth di home fragment: $serverAuth")
-            } catch (e: ApiException){
-                Log.e(TAG, "onActivityResult: ${e.message}")
-            }
-        }
+    private fun obtainViewModel(activity: AppCompatActivity): MainViewModel {
+        val factory = ViewModelFactory.getInstance(activity.application)
+        return ViewModelProvider(activity, factory)[MainViewModel::class.java]
     }
 
-    private fun postRefreshToken(account: GoogleSignInAccount?){
-        val client = ApiConfig.getApiServiceGetToken(requireActivity(),  account?.idToken.toString()).postRefreshToken(
-            PostRefreshTokenRequest(account?.serverAuthCode.toString())
-        )
-        client.enqueue(object : Callback<RefreshResponse> {
-            override fun onResponse(
-                call: Call<RefreshResponse>,
-                response: Response<RefreshResponse>
-            ) {
-                if (response.isSuccessful){
-                    val tempRefreshToken = response.body()?.data?.refreshToken
-                    TokenManager.refreshTokenManager = tempRefreshToken.toString()
-                    Log.d(TAG, "refreshToken Manager: ${TokenManager.refreshTokenManager}")
-                }
-            }
-
-            override fun onFailure(call: Call<RefreshResponse>, t: Throwable) {
-                Toast.makeText(requireActivity(), t.message, Toast.LENGTH_SHORT).show()
-                Log.e(TAG, "onFailure: ${t.message}")
-            }
-
-        })
-    }
-
-    private fun observeViewModel() {
-        viewModel.recommendations.observe(viewLifecycleOwner) { recommendations ->
-            list.addAll(recommendations)
-            list.shuffle()
-            binding.cardStackView.layoutManager = manager
-            binding.cardStackView.adapter = HomeAdapter(requireContext(), list)
-        }
-
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
-        }
-    }
 
     private fun init(){
         manager = CardStackLayoutManager(requireContext(), object : CardStackListener {
@@ -166,10 +105,10 @@ class HomeFragment : Fragment() {
             override fun onCardSwiped(direction: Direction?) {
 
                 if (direction == Direction.Right){
-                    viewModel.postLikeDog(requireActivity(), list[0].data?.get(0)?.id)
+                    postLikeDog(account = account)
                     Toast.makeText(requireContext(), "You have liked this dog", Toast.LENGTH_SHORT).show()
                 } else if (direction == Direction.Left){
-                    viewModel.postDislikeDog(requireActivity(), list[0].data?.get(0)?.id)
+                    postDislikeDog(account = account)
                     Toast.makeText(requireContext(), "You have disliked this dog", Toast.LENGTH_SHORT).show()
                 } else if (manager.topPosition == list.size){
                     Toast.makeText(requireContext(), "You have reached the end", Toast.LENGTH_SHORT).show()
@@ -197,14 +136,100 @@ class HomeFragment : Fragment() {
         manager.setDirections(Direction.HORIZONTAL)
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
+    private fun getDog(){
+        val client = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), prefManager.getToken().toString()).getRecommendations()
+        client.enqueue(object : Callback<RecommendationResponse> {
+            override fun onResponse(
+                call: Call<RecommendationResponse>,
+                response: Response<RecommendationResponse>
+            ) {
+                if (response.isSuccessful){
+                    val body = response.body()
+                    val petId = body?.data?.get(0)?.id
+                    Log.d(TAG, "onResponse: $body")
+                    if (body != null){
+                        for (i in 0 until body.data?.size!!){
+                            list.add(body)
+                        }
+                        list.shuffle()
+                        binding.cardStackView.layoutManager = manager
+                        binding.cardStackView.adapter = HomeAdapter(requireContext(), list)
+                    }
+                } else{
+
+                    Toast.makeText(requireContext(), "No data found", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "onResponse: ${response.message()} ${response.code()} ${response.errorBody()} ${response.raw()}")
+                }
+                Log.d(TAG, "List: $list")
+
+                Log.d(TAG, "onResponse: ${response.body()} ${response.code()} ${response.message()} ${response.errorBody()} ${response.isSuccessful}")
+            }
+
+            override fun onFailure(call: Call<RecommendationResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
     }
 
+    private fun postLikeDog(account: GoogleSignInAccount?){
+        val client = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), prefManager.getToken().toString()).postPreference(
+            PostPreferencesRequest(
+                preference = "LIKE",
+                petId = list[manager.topPosition - 1].data?.get(manager.topPosition - 1)?.id
+            )
+        )
+        client.enqueue(object : Callback<PreferencesResponse>{
+            override fun onResponse(
+                call: Call<PreferencesResponse>,
+                response: Response<PreferencesResponse>
+            ) {
+                if (response.isSuccessful){
+                    val body = response.body()
+                    Log.d(TAG, "onResponse: $body")
+                    if (body != null){
+                        Toast.makeText(requireContext(), "You have liked this dog", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PreferencesResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
+    }
+
+    private fun postDislikeDog(account: GoogleSignInAccount?){
+        val client = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(), prefManager.getToken().toString()).postPreference(
+            PostPreferencesRequest(
+                preference = "DISLIKE",
+                petId = list[manager.topPosition - 1].data?.get(manager.topPosition - 1)?.id
+            )
+        )
+        client.enqueue(object : Callback<PreferencesResponse>{
+            override fun onResponse(
+                call: Call<PreferencesResponse>,
+                response: Response<PreferencesResponse>
+            ) {
+                if (response.isSuccessful){
+                    val body = response.body()
+                    Log.d(TAG, "onResponse: $body")
+                    if (body != null){
+                        Toast.makeText(requireContext(), "You have disliked this dog", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PreferencesResponse>, t: Throwable) {
+                Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+
+        })
+    }
     companion object {
         private const val TAG = "HomeFragment"
     }
