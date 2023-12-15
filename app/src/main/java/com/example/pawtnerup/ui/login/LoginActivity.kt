@@ -16,6 +16,7 @@ import com.example.pawtnerup.api.response.RecommendationResponse
 import com.example.pawtnerup.api.response.RefreshResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
 import com.example.pawtnerup.data.model.TokenManager
+import com.example.pawtnerup.data.model.TokenModel
 import com.example.pawtnerup.databinding.ActivityLoginBinding
 import com.example.pawtnerup.ui.detail.SliderAdapter
 import com.example.pawtnerup.ui.main.MainActivity
@@ -40,6 +41,8 @@ class LoginActivity : AppCompatActivity() {
     private val loginViewModel by viewModels<LoginViewModel>{
         LoginViewModelFactory.getInstance(this)
     }
+    private var serverAuthCodeListener: ServerAuthCodeListener? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +56,6 @@ class LoginActivity : AppCompatActivity() {
             .build()
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-
         val account = GoogleSignIn.getLastSignedInAccount(this)
 
         if (account != null) {
@@ -70,10 +72,19 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    interface ServerAuthCodeListener {
+        fun onServerAuthCodeReceived(serverAuthCode: String)
+    }
+
+    fun setServerAuthCodeListener(listener: ServerAuthCodeListener) {
+        this.serverAuthCodeListener = listener
+    }
+
     init {
         refreshToken = ""
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -89,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
                 val photoUrl = account.photoUrl
 
                 Log.d(TAG, "idToken: " + idToken!!)
-                Log.d(TAG, "serverAuth: $serverAuth")
+                Log.d(TAG, "serverAuth di dalam onActiviftResult: $serverAuth")
 
                 Log.d(TAG, "Sign-in success: " +
                         "idToken : $idToken, " +
@@ -111,7 +122,12 @@ class LoginActivity : AppCompatActivity() {
                         if (response.isSuccessful){
 //                            val refreshToken = response.headers()["X-Refresh-token"]
 //                            Log.d(TAG, "refreshToken: $refreshToken")
+
+                            val tokenModel = TokenModel(
+                                account?.serverAuthCode.toString()
+                            )
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            intent.putExtra("tokenModel", tokenModel)
                             startActivity(intent)
                         }
                         else {
@@ -132,7 +148,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    fun postRefreshToken( account: GoogleSignInAccount?){
+    fun postRefreshToken(account: GoogleSignInAccount?){
         val client = ApiConfig.getApiServiceGetToken(this,  account?.idToken.toString()).postRefreshToken(
             PostRefreshTokenRequest(account?.serverAuthCode.toString())
         )
@@ -143,8 +159,9 @@ class LoginActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful){
                     val tempRefreshToken = response.body()?.data?.refreshToken
-                        refreshToken = tempRefreshToken.toString()
+                    refreshToken = tempRefreshToken.toString()
                     TokenManager.refreshTokenManager = tempRefreshToken.toString()
+                    serverAuthCodeListener?.onServerAuthCodeReceived(tempRefreshToken.toString())
                     Log.d(TAG, "refreshToken: ${TokenManager.refreshTokenManager}")
                 }
             }

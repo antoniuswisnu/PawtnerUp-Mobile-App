@@ -1,5 +1,6 @@
 package com.example.pawtnerup.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -24,6 +25,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.Scopes
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Scope
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.Direction
@@ -38,7 +42,7 @@ class HomeFragment : Fragment() {
     private lateinit var manager: CardStackLayoutManager
     private lateinit var list : ArrayList<RecommendationResponse>
     private lateinit var mGoogleSignInClient: GoogleSignInClient
-    private var account: GoogleSignInAccount? = null
+//    private var account: GoogleSignInAccount? = null
     private lateinit var viewModel: HomeViewModel
     private val loginViewModel by viewModels<LoginViewModel>{
         LoginViewModelFactory.getInstance(requireActivity())
@@ -53,6 +57,8 @@ class HomeFragment : Fragment() {
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
+//            .requestScopes(Scope(1, "https://www.googleapis.com/auth/userinfo.email"))
+            .requestScopes(Scope(Scopes.PROFILE))
             .requestIdToken(getString(R.string.pawtnerup_mobile_client_id_new))
             .requestServerAuthCode(getString(R.string.pawtnerup_mobile_client_id_new), true)
             .build()
@@ -60,9 +66,7 @@ class HomeFragment : Fragment() {
         list = arrayListOf()
 
         mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso)
-        account = GoogleSignIn.getLastSignedInAccount(requireActivity())
-
-        postRefreshToken(account)
+        val account = GoogleSignIn.getLastSignedInAccount(requireActivity())
 
         val refreshToken = TokenManager.refreshTokenManager
 
@@ -70,8 +74,8 @@ class HomeFragment : Fragment() {
         val repository = PetRepository(apiService)
         val factory = HomeViewModelFactory(repository)
 
-        Log.d(TAG, "Refresh Token: ${LoginActivity().refreshToken}")
-        Log.d(TAG, "Token: ${loginViewModel.getToken()}")
+        Log.d(TAG, "Refresh Token LoginActivity: ${LoginActivity().refreshToken}")
+        Log.d(TAG, "Token Preferences: ${loginViewModel.getToken()}")
         Log.d(TAG, "refreshToken Model : $refreshToken")
 
         viewModel = ViewModelProvider(this, factory)[HomeViewModel::class.java]
@@ -80,13 +84,44 @@ class HomeFragment : Fragment() {
             showLoading(isLoading)
         }
         observeViewModel()
-        viewModel.getDog()
+        viewModel.getDog() 
         init()
 
+//        val signInIntent = mGoogleSignInClient.signInIntent
+//        startActivityForResult(signInIntent, 1)
+
+//        mGoogleSignInClient.silentSignIn().addOnCompleteListener(requireActivity()) { task ->
+//            if (task.isSuccessful) {
+//                val account = task.result
+//                val serverAuth = account?.serverAuthCode
+//                postRefreshToken(account)
+//                Log.d(TAG, "serverAuth di home fragment: $serverAuth")
+//            } else {
+//                val signInIntent = mGoogleSignInClient.signInIntent
+//                startActivityForResult(signInIntent, 1)
+//            }
+//            Log.d(TAG, "silentSignIn: ${task.isSuccessful}")
+//        }
         return binding.root
     }
 
-    fun postRefreshToken(account: GoogleSignInAccount?){
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 1){
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                val serverAuth = account.serverAuthCode
+                postRefreshToken(account)
+                Log.d(TAG, "serverAuth di home fragment: $serverAuth")
+            } catch (e: ApiException){
+                Log.e(TAG, "onActivityResult: ${e.message}")
+            }
+        }
+    }
+
+    private fun postRefreshToken(account: GoogleSignInAccount?){
         val client = ApiConfig.getApiServiceGetToken(requireActivity(),  account?.idToken.toString()).postRefreshToken(
             PostRefreshTokenRequest(account?.serverAuthCode.toString())
         )
@@ -98,7 +133,7 @@ class HomeFragment : Fragment() {
                 if (response.isSuccessful){
                     val tempRefreshToken = response.body()?.data?.refreshToken
                     TokenManager.refreshTokenManager = tempRefreshToken.toString()
-                    Log.d(TAG, "refreshToken: ${TokenManager.refreshTokenManager}")
+                    Log.d(TAG, "refreshToken Manager: ${TokenManager.refreshTokenManager}")
                 }
             }
 
