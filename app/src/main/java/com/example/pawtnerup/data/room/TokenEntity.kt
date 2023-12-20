@@ -8,9 +8,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = "token_table")
 @Parcelize
 data class TokenEntity(
-
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
     val token: String
 ) : Parcelable

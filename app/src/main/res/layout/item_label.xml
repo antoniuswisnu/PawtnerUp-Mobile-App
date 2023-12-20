@@ -5,20 +5,20 @@
     android:orientation="horizontal"
     android:background="@drawable/custom_rectangle"
     android:padding="10dp"
+    android:layout_marginEnd="3dp"
     >
 
     <TextView
         android:id="@+id/tvLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Label"
+        android:text="@string/label"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="10sp"
         android:layout_gravity="center"
         android:fontFamily="@font/poppins"
         />
-
 
 </LinearLayout>

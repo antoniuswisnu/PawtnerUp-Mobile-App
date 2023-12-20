@@ -10,7 +10,6 @@ import com.example.pawtnerup.data.model.BreedModel
 class BreedAdapter(private val items: MutableList<BreedModel>,
                    private var onDeleteClick: (Int) -> Unit = {}) : RecyclerView.Adapter<BreedAdapter.ViewHolder>() {
 
-
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val itemName: TextView = itemView.findViewById(R.id.tvBreedName)
     }

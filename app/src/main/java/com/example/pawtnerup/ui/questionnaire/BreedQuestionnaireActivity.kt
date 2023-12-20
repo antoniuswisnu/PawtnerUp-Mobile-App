@@ -9,8 +9,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.pawtnerup.api.request.PostQuestionnaireRequest
@@ -21,11 +19,7 @@ import com.example.pawtnerup.api.retrofit.ApiConfig
 import com.example.pawtnerup.data.PrefManager
 import com.example.pawtnerup.data.model.BreedModel
 import com.example.pawtnerup.data.model.QuestionnaireModel
-import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.databinding.ActivityBreedQuestionnaireBinding
-import com.example.pawtnerup.ui.login.LoginActivity
-import com.example.pawtnerup.ui.login.LoginViewModel
-import com.example.pawtnerup.ui.login.LoginViewModelFactory
 import com.example.pawtnerup.ui.splash.LoadingActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -44,29 +38,21 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBreedQuestionnaireBinding
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private var account: GoogleSignInAccount? = null
-
     private var petSizes = ArrayList<String>()
     private var petAges = ArrayList<String>()
     private var petGenders = ArrayList<String>()
     private var petBreeds: Int? = null
     private var allPetBreeds = ArrayList<Int>()
-
     var listBreed: ArrayList<BreedItem> = ArrayList()
-
     private val selectedItems = mutableListOf<BreedModel>()
     private lateinit var recyclerView: RecyclerView
-    private val loginViewModel by viewModels<LoginViewModel>{
-        LoginViewModelFactory.getInstance(this)
-    }
     private lateinit var prefManager: PrefManager
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBreedQuestionnaireBinding.inflate(layoutInflater)
         setContentView(binding.root)
         prefManager = PrefManager.getInstance(this)
-
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
@@ -90,15 +76,11 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                 allPetBreeds.add(petBreeds!!)
                 addSelectedItem(BreedModel(selectedItem))
 
-                Log.d(TAG, "allPetBreeds: $allPetBreeds")
-                Log.d(TAG, "BreedModel : $selectedItems")
-
-                Log.d(TAG, "onItemSelected: $selectedItem")
                 Toast.makeText(this@BreedQuestionnaireActivity, selectedItem, Toast.LENGTH_SHORT).show()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO()
+                Toast.makeText(this@BreedQuestionnaireActivity, "Nothing Selected", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -122,8 +104,9 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         val petSizeConvert = petSizes.toString().replace("[", "").replace("]", "").replace(" ","").uppercase()
         Log.d(TAG, "getDogBreeds: $petSizeConvert")
 
-        val refreshToken = TokenManager.refreshTokenManager
-        val client = ApiConfig.getApiService(this, account?.idToken.toString(),  prefManager.getToken().toString()).getBreeds(petSizeConvert)
+        val client = ApiConfig.getApiService(this, account?.idToken.toString(),
+            prefManager.getToken()
+        ).getBreeds(petSizeConvert)
         client.enqueue(object : Callback<BreedResponse> {
             override fun onResponse(
                 call: Call<BreedResponse>,
@@ -132,8 +115,6 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                 if (response.isSuccessful){
                     val responseBody = response.body()
                     val dogBreeds = responseBody?.data
-
-                    Log.d(TAG, "petSizes: $petSizes")
 
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
@@ -150,7 +131,6 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
                             e.printStackTrace()
                         }
                     }
-                    Log.d(TAG, "onResponse: $dogBreeds")
                 }
             }
             override fun onFailure(call: Call<BreedResponse>, t: Throwable) {
@@ -203,8 +183,9 @@ class BreedQuestionnaireActivity : AppCompatActivity() {
         petAges = questionnaireModel2.petAges!!
         petGenders = questionnaireModel2.petGenders!!
 
-        val refreshToken = TokenManager.refreshTokenManager
-        val client = ApiConfig.getApiService(this,account?.idToken.toString(),  prefManager.getToken().toString()).postQuestionnaire(
+        val client = ApiConfig.getApiService(this,account?.idToken.toString(),
+            prefManager.getToken()
+        ).postQuestionnaire(
             PostQuestionnaireRequest(
                 petGenders = petGenders.map {
                     it.uppercase()

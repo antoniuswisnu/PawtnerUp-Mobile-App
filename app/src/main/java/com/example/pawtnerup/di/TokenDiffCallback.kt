@@ -10,7 +10,6 @@ class TokenDiffCallback(private val oldTokenList: List<TokenEntity>, private val
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         return oldTokenList[oldItemPosition].id == newTokenList[newItemPosition].id
     }
-
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldToken = oldTokenList[oldItemPosition]
         val newToken = newTokenList[newItemPosition]

@@ -10,7 +10,6 @@ class PrefManager private constructor(context: Context) {
 
         private const val PREFS_FILENAME = "TokenPrefs"
         private const val KEY_TOKEN = "token"
-        private const val KEY_TOKEN2 = "token2"
 
         @Volatile
         private var instance: PrefManager? = null
@@ -34,24 +33,11 @@ class PrefManager private constructor(context: Context) {
         sharedPreferences.edit().putString(KEY_TOKEN, token).apply()
     }
 
-    fun getToken(): String? {
-        return sharedPreferences.getString(KEY_TOKEN, null)
+    fun getToken(): String {
+        return sharedPreferences.getString(KEY_TOKEN, "") ?: ""
     }
 
     fun clear() {
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
+        sharedPreferences.edit().clear().apply()
     }
-
-    fun saveToken2(token: String) {
-        sharedPreferences.edit().putString(KEY_TOKEN2, token).apply()
-    }
-
-    fun getToken2(): String? {
-        return sharedPreferences.getString(KEY_TOKEN2, null)
-    }
-
-
-
 }

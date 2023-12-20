@@ -11,7 +11,6 @@ import com.bumptech.glide.Glide
 import com.example.pawtnerup.data.PrefManager
 import com.example.pawtnerup.databinding.FragmentProfileBinding
 import com.example.pawtnerup.ui.login.LoginActivity
-import com.example.pawtnerup.ui.report.ReportActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -75,8 +74,8 @@ class ProfileFragment : Fragment() {
         }
 
         binding.csLogout.setOnClickListener {
+            prefManager.clear()
             mGoogleSignInClient.signOut().addOnCompleteListener {
-                prefManager.clear()
                 startActivity(Intent(requireActivity(), LoginActivity::class.java))
                 requireActivity().finish()
             }

@@ -6,18 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pawtnerup.api.retrofit.ApiConfig
 import com.example.pawtnerup.data.PrefManager
-import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.data.repository.PetRepository
 import com.example.pawtnerup.databinding.FragmentFavoriteBinding
-import com.example.pawtnerup.ui.login.LoginActivity
-import com.example.pawtnerup.ui.login.LoginViewModel
-import com.example.pawtnerup.ui.login.LoginViewModelFactory
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -29,11 +24,7 @@ class FavoriteFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private var account: GoogleSignInAccount? = null
-
     private lateinit var viewModel: FavoriteViewModel
-    private val loginViewModel by viewModels<LoginViewModel>{
-        LoginViewModelFactory.getInstance(requireActivity())
-    }
     private lateinit var prefManager: PrefManager
 
     override fun onCreateView(
@@ -52,9 +43,9 @@ class FavoriteFragment : Fragment() {
         prefManager = PrefManager.getInstance(requireActivity())
 
 
-        val refreshToken = TokenManager.refreshTokenManager
-
-        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(),  prefManager.getToken().toString())
+        val apiService = ApiConfig.getApiService(requireActivity(), account?.idToken.toString(),
+            prefManager.getToken()
+        )
         val repository = PetRepository(apiService)
         val factory = FavoriteViewModelFactory(repository)
 

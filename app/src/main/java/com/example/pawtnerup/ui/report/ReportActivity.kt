@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import com.example.pawtnerup.R
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,7 +13,6 @@ import android.view.View
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
-import com.example.pawtnerup.databinding.ActivityQuestionnaireBinding
 import com.example.pawtnerup.databinding.ActivityReportBinding
 import com.example.pawtnerup.di.reduceFileImage
 import com.example.pawtnerup.di.uriToFile

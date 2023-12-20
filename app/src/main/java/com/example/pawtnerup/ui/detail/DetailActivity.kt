@@ -1,8 +1,6 @@
 package com.example.pawtnerup.ui.detail
 
-import android.R.id.message
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -12,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.pawtnerup.R
 import com.example.pawtnerup.api.response.PetResponse
 import com.example.pawtnerup.api.retrofit.ApiConfig
+import com.example.pawtnerup.data.PrefManager
 import com.example.pawtnerup.data.model.DogModel
-import com.example.pawtnerup.data.model.TokenManager
 import com.example.pawtnerup.databinding.ActivityDetailBinding
 import com.example.pawtnerup.ui.favorite.FavoriteFragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -24,6 +22,10 @@ import com.smarteist.autoimageslider.SliderView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 
 class DetailActivity : AppCompatActivity() {
@@ -35,6 +37,8 @@ class DetailActivity : AppCompatActivity() {
     private lateinit var petId: String
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private var account: GoogleSignInAccount? = null
+    private lateinit var prefManager: PrefManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,8 @@ class DetailActivity : AppCompatActivity() {
             .build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         account = GoogleSignIn.getLastSignedInAccount(this)
+        prefManager = PrefManager.getInstance(this)
+
 
         val dogModel = if (Build.VERSION.SDK_INT >= 33){
             intent.getParcelableExtra(EXTRA_DOG, DogModel::class.java)
@@ -62,18 +68,22 @@ class DetailActivity : AppCompatActivity() {
         val rescueStory = dogModel?.rescueStory
         val sterilizationStatus = dogModel?.sterilizationStatus
         val phoneNumber = dogModel?.phoneNumber
+        val shelterName = dogModel?.shelterName
+        val shelterAddress = dogModel?.shelterAddress
+        val labels = dogModel?.labels
         phoneNumber?.replace("tel:","")?.replace("-","")
 
         with(binding){
             tvName.text = nameDog
             tvBreed.text = breedDog
-            tvGender.text = genderDog
-            tvStatus.text = sterilizationStatus
+            tvGender.text = genderDog?.lowercase()
+            tvStatus.text = sterilizationStatus?.lowercase()
             tvStory.text = rescueStory
-            tvAge.text = bornDate
+            tvAge.text = calculateAge(bornDate!!).toString()
+            tvShelter.text = shelterName
+            tvAddress.text = shelterAddress
+            tvLabel.text = labels?.joinToString(", ")
         }
-
-        Log.d(TAG, "phoneNumber: $phoneNumber")
 
         binding.btnWa.setOnClickListener {
             if (nameDog != null) {
@@ -81,8 +91,30 @@ class DetailActivity : AppCompatActivity() {
             }
         }
 
+        binding.btnBack.setOnClickListener {
+            onBackPressed()
+        }
+
         binding.btnDelete.setOnClickListener {
-            deleteData()
+            AlertDialog.Builder(this@DetailActivity)
+                .setTitle("Delete")
+                .setMessage("Are you sure want to delete this dog?")
+                .setPositiveButton("Yes") { _, _ ->
+                    val fragmentManager = supportFragmentManager
+                    val fragmentTransaction = fragmentManager.beginTransaction()
+
+                    val yourFragment = FavoriteFragment()
+                    fragmentTransaction.replace(R.id.nav_host_fragment, yourFragment)
+                    fragmentTransaction.addToBackStack(null)
+                    fragmentTransaction.commit()
+
+                    deleteData()
+
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
 
         sliderView = binding.imgDetail
@@ -104,6 +136,20 @@ class DetailActivity : AppCompatActivity() {
         Log.d(TAG, "photoDog : $photoDog")
     }
 
+    private fun calculateAge(birthDateString: String): Int {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val birthDate: Date = dateFormat.parse(birthDateString) ?: Date()
+        val calendarBirth = Calendar.getInstance()
+        calendarBirth.time = birthDate
+        val calendarNow = Calendar.getInstance()
+        val years = calendarNow.get(Calendar.YEAR) - calendarBirth.get(Calendar.YEAR)
+        if (calendarNow.get(Calendar.DAY_OF_YEAR) < calendarBirth.get(Calendar.DAY_OF_YEAR)) {
+            return years - 1
+        }
+        return years
+    }
+
+
     private fun contactShelter(dogName: String, phoneNumber: String){
         val message = "Hi, I'm interested in adopting $dogName. Can you please provide me with more information?"
 
@@ -112,69 +158,18 @@ class DetailActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun getData(){
-        val refreshToken = TokenManager.refreshTokenManager
-        val client = ApiConfig.getApiService(this, account?.idToken.toString(), refreshToken?:"").getPet(petId)
-        client.enqueue(object : Callback<PetResponse> {
-            override fun onResponse(
-                call: Call<PetResponse>,
-                response: Response<PetResponse>
-            ) {
-                if (response.isSuccessful){
-                    val responseBody = response.body()
-                    val phoneNumber = responseBody?.data?.phoneNumber
-                    val dogName = responseBody?.data?.name
-                    val message = "Hi, I'm interested in adopting $dogName. Can you please provide me with more information?"
-//                    phoneNumber?.replace("tel:","")?.replace("-","")
-
-                    Log.d(TAG, "phoneNumber: $phoneNumber")
-                    Log.d(TAG, "message: $message")
-
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse("http://api.whatsapp.com/send?phone=$phoneNumber&text=$message")
-                    startActivity(intent)
-//                    if (isWhatsAppInstalled()){
-//
-//                    } else {
-//                        Log.d(TAG, "onResponse: WhatsApp not installed")
-//                    }
-
-                }
-            }
-            override fun onFailure(call: Call<PetResponse>, t: Throwable) {
-                Log.d(TAG, "onFailure: ${t.message}")
-            }
-
-        })
-    }
-
     private fun deleteData(){
-        val refreshToken = TokenManager.refreshTokenManager
-        val client = ApiConfig.getApiService(this, account?.idToken.toString(), refreshToken?:"").deletePet(petId)
+        val client = ApiConfig.getApiService(this, account?.idToken.toString(), prefManager.getToken()).deletePet(petId)
         client.enqueue(object : Callback<PetResponse> {
             override fun onResponse(
                 call: Call<PetResponse>,
                 response: Response<PetResponse>
             ) {
                 if (response.isSuccessful){
-                    AlertDialog.Builder(this@DetailActivity)
-                        .setTitle("Delete")
-                        .setMessage("Are you sure want to delete this dog?")
-                        .setPositiveButton("Yes") { _, _ ->
-                            val fragmentManager = supportFragmentManager
-                            val fragmentTransaction = fragmentManager.beginTransaction()
-
-                            val yourFragment = FavoriteFragment()
-                            fragmentTransaction.replace(R.id.nav_host_fragment, yourFragment)
-                            fragmentTransaction.addToBackStack(null)
-                            fragmentTransaction.commit()
-
-
-                        }
-                        .setNegativeButton("No") { dialog, _ ->
-                            dialog.dismiss()
-                        }
-                        .show()
+                    val body = response.body()
+                    if (body != null){
+                        Log.d(TAG, "onResponse: $body")
+                    }
                 }
             }
             override fun onFailure(call: Call<PetResponse>, t: Throwable) {
@@ -182,16 +177,6 @@ class DetailActivity : AppCompatActivity() {
             }
 
         })
-    }
-
-    private fun isWhatsAppInstalled(): Boolean {
-        val packageManager: PackageManager = packageManager
-        return try {
-            packageManager.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
-            true
-        } catch (e: PackageManager.NameNotFoundException) {
-            false
-        }
     }
 
     companion object {

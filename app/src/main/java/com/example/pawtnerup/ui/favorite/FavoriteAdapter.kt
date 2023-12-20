@@ -3,7 +3,6 @@ package com.example.pawtnerup.ui.favorite
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.app.ActivityOptionsCompat
@@ -51,7 +50,10 @@ class FavoriteAdapter(val context: Context, private val listDog: List<Preference
                 dog?.sterilizationStatus,
                 dog?.rescueStory,
                 dog?.media,
-                dog?.shelter?.phoneNumber
+                dog?.shelter?.phoneNumber,
+                dog?.shelter?.name,
+                dog?.shelter?.address,
+                dog?.labels
             )
 
             val intent = Intent(context, DetailActivity::class.java)
@@ -67,13 +69,8 @@ class FavoriteAdapter(val context: Context, private val listDog: List<Preference
 
             context.startActivity(intent, optionsCompat.toBundle())
         }
-
-        Log.d(TAG, "dogPhoto: $photoDog ${dog?.media}")
     }
 
     class ViewHolder (val binding: ItemDogBinding): RecyclerView.ViewHolder(binding.root)
 
-    companion object {
-        private const val TAG = "FavoriteAdapter"
-    }
 }

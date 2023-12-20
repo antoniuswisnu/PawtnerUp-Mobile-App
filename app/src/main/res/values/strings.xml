@@ -47,4 +47,19 @@
     <string name="about_us">About Us</string>
     <string name="log_out">Log Out</string>
     <string name="submit">Submit</string>
+    <string name="discover">Discover</string>
+    <string name="label">Label</string>
+    <string name="bio">Bio</string>
+    <string name="about_this_dog">About this dog</string>
+    <string name="breed">Breed</string>
+    <string name="neutered">Neutered</string>
+    <string name="status">Status</string>
+    <string name="male">Male</string>
+    <string name="gender">Gender</string>
+    <string name="shelter_adress">Shelter Adress</string>
+    <string name="shelter">Shelter</string>
+    <string name="my_story">My Story</string>
+    <string name="contact_now">Contact Now</string>
+    <string name="label_1">Label 1</string>
+    <string name="characteristic">Characteristic :</string>
 </resources>

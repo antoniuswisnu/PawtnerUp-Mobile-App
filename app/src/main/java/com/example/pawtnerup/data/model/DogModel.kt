@@ -14,7 +14,10 @@ data class DogModel (
     val sterilizationStatus: String? = null,
     val rescueStory: String? = null,
     val media: List<String?>? = null,
-    val phoneNumber: String? = null
+    val phoneNumber: String? = null,
+    val shelterName: String? = null,
+    val shelterAddress: String? = null,
+    val labels: List<String?>? = null
 ): Parcelable
 
 @Parcelize
@@ -26,5 +29,8 @@ data class DogRecommendationModel (
     val estimateAge: String? = null,
     val sterilizationStatus: String? = null,
     val rescueStory: String? = null,
-    val media: List<String?>? = null
+    val media: List<String?>? = null,
+    val shelterName: String? = null,
+    val shelterAddress: String? = null,
+    val labels: List<String?>? = null
 ): Parcelable

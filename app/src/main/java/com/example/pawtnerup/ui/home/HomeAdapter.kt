@@ -1,5 +1,6 @@
 package com.example.pawtnerup.ui.home
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -9,8 +10,6 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.pawtnerup.api.response.RecommendationResponse
 import com.example.pawtnerup.data.model.DogRecommendationModel
@@ -25,17 +24,21 @@ class HomeAdapter(val context: Context, private val list : ArrayList<Recommendat
     override fun getItemCount(): Int {
         return list.size
     }
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: HomeViewHolder, position: Int) {
         val dog = list[position].data?.get(position)
         holder.binding.tvDogName.text = dog?.name
         holder.binding.tvBreed.text = dog?.breed
-        holder.binding.tvGender.text = dog?.gender?.lowercase()
+        if (dog?.gender == "FEMALE"){
+            holder.binding.tvGender.text = "♀️ ${dog.gender.lowercase()}"
+        } else {
+            holder.binding.tvGender.text = "♂️ ${dog?.gender?.lowercase()}"
+        }
         holder.binding.tvDogBio.text = dog?.rescueStory
-
-//        holder.binding.rvLabel.layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
-        holder.binding.rvLabel.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        holder.binding.rvLabel.setHasFixedSize(true)
-        holder.binding.rvLabel.adapter = LabelAdapter(context, list)
+//        holder.binding.tvDogAge.text = "${dog?.estimateAge} years old"
+        holder.binding.tvLabel1.text = dog?.labels?.get(0)
+        holder.binding.tvLabel2.text = dog?.labels?.get(1)
+        holder.binding.tvLabel3.text = dog?.labels?.get(2)
 
         Glide.with(context)
             .load(list[position].data?.get(position)?.media?.get(0))
@@ -50,7 +53,10 @@ class HomeAdapter(val context: Context, private val list : ArrayList<Recommendat
                 dog?.estimateAge.toString(),
                 dog?.sterilizationStatus,
                 dog?.rescueStory,
-                dog?.media
+                dog?.media,
+                dog?.shelter?.name,
+                dog?.shelter?.address,
+                dog?.labels
             )
 
             val intent = Intent(context, DetailRecommendationActivity::class.java)

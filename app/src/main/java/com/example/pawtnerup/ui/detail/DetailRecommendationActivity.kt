@@ -3,10 +3,6 @@ package com.example.pawtnerup.ui.detail
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import com.bumptech.glide.Glide
-import com.example.pawtnerup.R
-import com.example.pawtnerup.data.model.DogModel
 import com.example.pawtnerup.data.model.DogRecommendationModel
 import com.example.pawtnerup.databinding.ActivityDetailRecommendationBinding
 import com.smarteist.autoimageslider.SliderView
@@ -36,6 +32,9 @@ class DetailRecommendationActivity : AppCompatActivity() {
         val rescueStory = dogModel?.rescueStory
         val sterilizationStatus = dogModel?.sterilizationStatus
         val breed = dogModel?.breed
+        val shelterName = dogModel?.shelterName
+        val shelterAddress = dogModel?.shelterAddress
+        val labels = dogModel?.labels
 
         with(binding){
             tvName.text = nameDog
@@ -44,9 +43,12 @@ class DetailRecommendationActivity : AppCompatActivity() {
             tvStatus.text = sterilizationStatus
             tvStory.text = rescueStory
             tvBreed.text = breed
+            tvShelter.text = shelterName
+            tvAddress.text = shelterAddress
+            tvLabel.text = labels?.joinToString(", ")
         }
 
-        sliderView = binding.imgDetailRecommendation
+        sliderView = binding.imgDetail
         imageUrl = ArrayList()
 
         val imageString: List<String> = listOf(
@@ -62,12 +64,11 @@ class DetailRecommendationActivity : AppCompatActivity() {
         sliderView.isAutoCycle = true
         sliderView.startAutoCycle()
 
-        Log.d(TAG, "photoDog Recommendation: $photoDog")
-
+        binding.btnBack.setOnClickListener {
+            onBackPressed()
+        }
     }
-
     companion object {
-        private const val TAG = "photoDog"
         const val EXTRA_RECOMMENDATION_DOG = "EXTRA_RECOMMENDATION_DOG"
     }
 }
